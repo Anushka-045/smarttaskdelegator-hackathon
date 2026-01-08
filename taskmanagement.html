@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Todo App</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Josefin Sans', sans-serif;
+  background: #f4f8ff;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 650px;
+  margin: 80px 20px;
+}
+
+h1 {
+  color: #2563eb;
+  letter-spacing: 8px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* Add Todo */
+.new-todo {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  display: grid;
+  grid-template-columns: 1fr 150px 120px 80px;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.new-todo input,
+.new-todo select,
+.new-todo button {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #dbeafe;
+  font-size: 14px;
+}
+
+.new-todo input {
+  outline: none;
+}
+
+.new-todo button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.new-todo button:hover {
+  background: #1e40af;
+}
+
+/* Todo Item */
+.todo-item {
+  background: white;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+}
+
+.todo-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.todo-left input {
+  width: 18px;
+  height: 18px;
+}
+
+.todo-text.completed {
+  text-decoration: line-through;
+  color: gray;
+}
+
+/* Priority tags */
+.priority {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.high { background: #fee2e2; color: #b91c1c; }
+.medium { background: #fef3c7; color: #92400e; }
+.low { background: #dcfce7; color: #166534; }
+
+.todo-date {
+  font-size: 12px;
+  color: #64748b;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>TODO</h1>
+
+  <form class="new-todo" onsubmit="addItem(event)">
+    <input id="todo-input" placeholder="Task name..." />
+    <input type="date" id="todo-date" />
+    <select id="todo-priority">
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
+    <button>Add</button>
+  </form>
+
+  <div id="todo-list"></div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    doc,
+    addDoc,
+    onSnapshot,
+    updateDoc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAgyMmefbJjeMBRK8lZ_MgkfgcsTwo2Q7M",
+    authDomain: "loginform-f0336.firebaseapp.com",
+    projectId: "loginform-f0336",
+    storageBucket: "loginform-f0336.firebasestorage.app",
+    messagingSenderId: "444250525738",
+    appId: "1:444250525738:web:04580411603a5c37ef7353"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUserId = null;
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      currentUserId = user.uid;
+      loadTodos();
+    } else {
+      alert("Please login first");
+    }
+  });
+
+  function loadTodos() {
+    const todosRef = collection(db, "users", currentUserId, "todos");
+
+    onSnapshot(todosRef, snapshot => {
+      const list = document.getElementById("todo-list");
+      list.innerHTML = "";
+
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+
+        const item = document.createElement("div");
+        item.className = "todo-item";
+
+        const left = document.createElement("div");
+        left.className = "todo-left";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = data.status === "completed";
+        checkbox.onchange = () => toggleStatus(docSnap.id);
+
+        const text = document.createElement("div");
+        text.className = "todo-text";
+        text.innerText = data.text;
+        if (data.status === "completed") text.classList.add("completed");
+
+        left.appendChild(checkbox);
+        left.appendChild(text);
+
+        const right = document.createElement("div");
+        right.style.textAlign = "right";
+
+        const date = document.createElement("div");
+        date.className = "todo-date";
+        date.innerText = data.date || "";
+
+        const priority = document.createElement("div");
+        priority.className = `priority ${data.priority}`;
+        priority.innerText = data.priority.toUpperCase();
+
+        right.appendChild(priority);
+        right.appendChild(date);
+
+        item.appendChild(left);
+        item.appendChild(right);
+        list.appendChild(item);
+      });
+    });
+  }
+
+  window.addItem = async function (e) {
+    e.preventDefault();
+
+    const text = document.getElementById("todo-input").value.trim();
+    const date = document.getElementById("todo-date").value;
+    const priority = document.getElementById("todo-priority").value;
+
+    if (!text) return;
+
+    await addDoc(
+      collection(db, "users", currentUserId, "todos"),
+      {
+        text,
+        date,
+        priority,
+        status: "active"
+      }
+    );
+
+    document.getElementById("todo-input").value = "";
+    document.getElementById("todo-date").value = "";
+  };
+
+  async function toggleStatus(id) {
+    const ref = doc(db, "users", currentUserId, "todos", id);
+    const snap = await getDoc(ref);
+
+    await updateDoc(ref, {
+      status: snap.data().status === "active" ? "completed" : "active"
+    });
+  }
+</script>
+
+</body>
+</html>
