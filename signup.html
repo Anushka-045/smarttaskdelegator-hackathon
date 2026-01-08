@@ -1,191 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Login | Smart Task Delegator</title>
+    <title>Signup | Smart Task Delegator</title>
+
     <style>
-    :root {
-        --bg-main: #f8f9fc;
-        --card-bg: #ffffff;
-        --neon: #b6ff00;
-        --text-dark: #111;
-        --text-muted: #555;
-    }
+        :root {
+            --bg-main: #f8f9fc;
+            --card-bg: #ffffff;
+            --neon: #b6ff00;
+            --text-dark: #111;
+            --text-muted: #555;
+        }
 
-    * { box-sizing: border-box; }
+        * { box-sizing: border-box; }
 
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', sans-serif;
-        background: var(--bg-main);
-        color: var(--text-dark);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        padding: 20px;
-    }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-    .glass {
-        max-width: 400px;
-        width: 100%;
-        padding: 40px 30px;
-        background: var(--card-bg);
-        border-radius: 24px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-        text-align: center;
-    }
+        .glass {
+            max-width: 400px;
+            width: 100%;
+            padding: 40px 30px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+            text-align: center;
+        }
 
-    .glass h2 {
-        margin-bottom: 25px;
-        font-size: 28px;
-        color: var(--neon);
-    }
+        .glass h2 {
+            margin-bottom: 25px;
+            font-size: 28px;
+            color: var(--neon);
+        }
 
-    input {
-        width: 100%;
-        padding: 14px;
-        margin: 10px 0;
-        border-radius: 12px;
-        border: 1px solid #ddd;
-        font-size: 15px;
-        color: var(--text-dark);
-        background: #fdfdfd;
-        transition: 0.3s;
-    }
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+        }
 
-    input::placeholder { color: var(--text-muted); }
+        input:focus {
+            outline: none;
+            border: 1px solid var(--neon);
+            box-shadow: 0 0 8px var(--neon);
+        }
 
-    input:focus {
-        outline: none;
-        border: 1px solid var(--neon);
-        box-shadow: 0 0 8px var(--neon);
-    }
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 14px;
+            font-weight: bold;
+        }
 
-    button {
-        width: 100%;
-        padding: 14px;
-        border-radius: 30px;
-        border: none;
-        font-size: 16px;
-        cursor: pointer;
-        margin-top: 14px;
-        font-weight: bold;
-        transition: 0.3s;
-    }
+        .btn-main {
+            background: var(--neon);
+            color: #111;
+        }
 
-    .btn-main {
-        background: var(--neon);
-        color: #111;
-    }
+        .google-btn {
+            background: #fff;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
 
-    .btn-main:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px var(--neon);
-    }
+        .divider {
+            margin: 15px 0;
+            color: var(--text-muted);
+        }
 
-    .google-btn {
-        background: #fdfdfd;
-        border: 1px solid #ddd;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        font-weight: 600;
-        color: var(--text-dark);
-    }
-
-    .google-btn:hover {
-        background: var(--neon);
-        color: #111;
-        box-shadow: 0 0 20px var(--neon);
-    }
-
-    .divider {
-        margin: 20px 0;
-        font-size: 14px;
-        color: var(--text-muted);
-    }
-
-    .toggle {
-        margin-top: 18px;
-        font-size: 14px;
-        cursor: pointer;
-        color: var(--neon);
-        transition: 0.3s;
-    }
-
-    .toggle:hover { text-decoration: underline; }
-
-    img.google-icon { filter: none; }
+        .toggle {
+            margin-top: 15px;
+            color: var(--neon);
+            cursor: pointer;
+        }
     </style>
 </head>
+
 <body>
 
 <div class="glass">
-
     <h2>Smart Task Delegator</h2>
 
-   
+    <!-- GOOGLE SIGN IN -->
     <button class="google-btn" id="googleLogin">
-        <img class="google-icon" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
         Continue with Google
     </button>
 
     <div class="divider">— or —</div>
 
-    <input id="username" placeholder="Username (only for signup)">
+    <!-- EMAIL SIGNUP -->
+    <input id="username" placeholder="Username">
     <input id="email" type="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
-    <input id="phone" placeholder="Phone (only for signup)">
+    <input id="phone" placeholder="Phone">
 
-    <button id="submit" class="btn-main">Create Account / Login</button>
+    <button id="submit" class="btn-main">Create Account</button>
 
-<div class="toggle" id="toggleMode">
-    Already have an account? Login
+    <div class="toggle" onclick="window.location.href='login.html'">
+        Already have an account? Login
+    </div>
 </div>
 
-<script>
-document.getElementById("toggleMode").addEventListener("click", () => {
-    window.location.href = "login.html"; // redirect to your login page
-});
-</script>
-
-
-</div>
-
+<!-- =========================
+     FIREBASE + LOGIC
+========================= -->
 <script type="module">
-import { signup } from "./script.js";
+
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+
 import {
-    getAuth,
-    GoogleAuthProvider,
-    signInWithPopup
-} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword
+} from
+"https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
-const auth = getAuth();
-const provider = new GoogleAuthProvider();
+import {
+  getDatabase,
+  ref,
+  set
+} from
+"https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
+/* 🔥 FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyAgyMmefbJjeMBRK8lZ_MgkfgcsTwo2Q7M",
+  authDomain: "loginform-f0336.firebaseapp.com",
+  databaseURL: "https://loginform-f0336-default-rtdb.firebaseio.com",
+  projectId: "loginform-f0336",
+  storageBucket: "loginform-f0336.firebasestorage.app",
+  messagingSenderId: "444250525738",
+  appId: "1:444250525738:web:04580411603a5c37ef7353"
+};
 
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+/* =========================
+   GOOGLE SIGN IN
+========================= */
 document.getElementById("googleLogin").addEventListener("click", () => {
-    signInWithPopup(auth, provider)
-        .then(() => window.location.href = "index.html")
-        .catch(err => alert(err.message));
+  const provider = new GoogleAuthProvider();
+
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      const user = result.user;
+
+      return set(ref(db, "users/" + user.uid), {
+        username: user.displayName || "",
+        email: user.email,
+        phone: "",
+        skills: [""],
+        workload: 0,
+        role: "user"
+      });
+    })
+    .then(() => {
+      window.location.href = "index.html";
+    })
+    .catch(err => alert(err.message));
 });
 
-
+/* =========================
+   EMAIL SIGNUP
+========================= */
 document.getElementById("submit").addEventListener("click", () => {
-    const username = document.getElementById("username").value;
-    const email    = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const phone    = document.getElementById("phone").value;
 
-    if (!email || !password) {
-        alert("Email and Password required");
-        return;
-    }
+  const username = document.getElementById("username").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const phone = document.getElementById("phone").value;
 
-    signup(username, email, password, phone);
+  if (!email || !password) {
+    alert("Email and Password required");
+    return;
+  }
+
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((res) => {
+      return set(ref(db, "users/" + res.user.uid), {
+        username,
+        email,
+        phone,
+        skills: [],
+        workload: 0,
+        role: "user"
+      });
+    })
+    .then(() => {
+      window.location.href = "index.html";
+    })
+    .catch(err => alert(err.message));
 });
+
 </script>
 
 </body>
 </html>
+
