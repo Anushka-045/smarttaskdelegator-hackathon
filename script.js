@@ -89,55 +89,6 @@ export function updateProfile(skills, workload) {
     }).then(() => alert("Profile updated!"));
 }
 
-export async function createSmartTask(title, requiredSkill) {
-
-    const usersSnap = await get(ref(db, "users"));
-
-    let bestUser = null;
-    let minLoad = Infinity;
-
-    usersSnap.forEach(u => {
-        const d = u.val();
-        if (d.skills?.includes(requiredSkill) && d.workload < minLoad) {
-            bestUser = u.key;
-            minLoad = d.workload;
-        }
-    });
-
-    await push(ref(db, "tasks"), {
-        title,
-        requiredSkill,
-        assignedTo: bestUser || "unassigned",
-        status: "Pending",
-        createdAt: new Date().toISOString()
-    });
-
-    if (bestUser) {
-        update(ref(db, "users/" + bestUser), {
-            workload: minLoad + 1
-        });
-    }
-
-    alert("✅ Task assigned!");
-}
 
 
-export function loadTasks(containerId) {
-    const container = document.getElementById(containerId);
-
-    onValue(ref(db, "tasks"), snap => {
-        container.innerHTML = "";
-        snap.forEach(t => {
-            const task = t.val();
-            container.innerHTML += `
-                <div class="task-card">
-                    <h3>${task.title}</h3>
-                    <p>Skill: ${task.requiredSkill}</p>
-                    <p>Status: ${task.status}</p>
-                    <p>Assigned: ${task.assignedTo}</p>
-                </div>
-            `;
-        });
-    });
-}
 
