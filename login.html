@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Smart Task Delegator</title>
+    <style>
+    :root {
+        --bg-main: #f8f9fc;
+        --card-bg: #ffffff;
+        --neon: #b6ff00;
+        --text-dark: #111;
+        --text-muted: #555;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: var(--bg-main);
+        color: var(--text-dark);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 380px;
+        padding: 40px 30px;
+        background: var(--card-bg);
+        border-radius: 24px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        text-align: center;
+    }
+
+    .login-card h2 {
+        font-size: 28px;
+        margin-bottom: 25px;
+        color: var(--neon);
+    }
+
+    input {
+        width: 100%;
+        padding: 14px;
+        margin: 12px 0;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+        font-size: 15px;
+        color: var(--text-dark);
+        background: #fdfdfd;
+        transition: 0.3s;
+    }
+
+    input::placeholder { color: var(--text-muted); }
+
+    input:focus {
+        outline: none;
+        border: 1px solid var(--neon);
+        box-shadow: 0 0 8px var(--neon);
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        border-radius: 30px;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 16px;
+        background: var(--neon);
+        color: var(--text-dark);
+        transition: 0.3s;
+    }
+
+    button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px var(--neon);
+    }
+
+    .toggle {
+        margin-top: 16px;
+        font-size: 14px;
+        color: var(--neon);
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .toggle:hover { text-decoration: underline; }
+
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <h2>Smart Task Delegator</h2>
+
+    <input id="name" type="text" placeholder="Name">
+    <input id="password" type="password" placeholder="Password">
+
+    <button id="loginBtn">Login</button>
+
+    <div class="toggle" id="toggleSignup">
+        Don't have an account? Signup
+    </div>
+</div>
+
+<script>
+document.getElementById("loginBtn").addEventListener("click", () => {
+    const name = document.getElementById("name").value;
+    const password = document.getElementById("password").value;
+
+    if(!name || !password){
+        alert("Please enter both Name and Password");
+        return;
+    }
+
+   
+    alert(`Logged in as: ${name}`);
+   
+});
+
+document.getElementById("toggleSignup").addEventListener("click", () => {
+    alert("Redirect to Signup page");
+     window.location.href = "signup.html"; // Uncomment to redirect
+});
+</script>
+
+</body>
+</html>
