@@ -1,6 +1,4 @@
-// ================================
-// 🔥 FIREBASE CONFIG & INIT
-// ================================
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 
 import {
@@ -35,9 +33,7 @@ const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
 export const auth = getAuth(app);
 
-// ================================
-// 🔐 SIGNUP / LOGIN
-// ================================
+
 export function signup(username, email, password, phone) {
 
     createUserWithEmailAndPassword(auth, email, password)
@@ -69,27 +65,20 @@ export function signup(username, email, password, phone) {
     });
 }
 
-// ================================
-// 🚪 LOGOUT
-// ================================
+
 export function logout() {
     signOut(auth).then(() => {
         window.location.href = "login.html";
     });
 }
 
-// ================================
-// 🔒 AUTH GUARD
-// ================================
+
 export function protectPage() {
     onAuthStateChanged(auth, user => {
         if (!user) window.location.href = "login.html";
     });
 }
 
-// ================================
-// 👤 UPDATE PROFILE
-// ================================
 export function updateProfile(skills, workload) {
     const user = auth.currentUser;
     if (!user) return;
@@ -100,9 +89,6 @@ export function updateProfile(skills, workload) {
     }).then(() => alert("Profile updated!"));
 }
 
-// ================================
-// 🧠 SMART TASK DELEGATION
-// ================================
 export async function createSmartTask(title, requiredSkill) {
 
     const usersSnap = await get(ref(db, "users"));
@@ -135,9 +121,7 @@ export async function createSmartTask(title, requiredSkill) {
     alert("✅ Task assigned!");
 }
 
-// ================================
-// 📋 LOAD TASKS
-// ================================
+
 export function loadTasks(containerId) {
     const container = document.getElementById(containerId);
 
@@ -156,3 +140,4 @@ export function loadTasks(containerId) {
         });
     });
 }
+
