@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Skills</title>
+</head>
+<body>
+
+<h2>Add Your Skills</h2>
+<input id="skills" placeholder="e.g. javascript, python">
+<button id="save">Save</button>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "loginform-f0336.firebaseapp.com",
+  databaseURL: "https://loginform-f0336-default-rtdb.firebaseio.com",
+  projectId: "loginform-f0336",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+document.getElementById("save").onclick = () => {
+  const skills = document.getElementById("skills").value.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+  const uid = localStorage.getItem("uid");
+  const email = localStorage.getItem("email");
+
+  if (!uid || skills.length === 0) return alert("Invalid");
+
+  set(ref(db, "users/" + uid), {
+    email,
+    skills,
+    workload: 0,
+    role: "user"
+  }).then(() => {
+    localStorage.clear();
+    location.href = "index.html";
+  });
+};
+</script>
+
+</body>
+</html>

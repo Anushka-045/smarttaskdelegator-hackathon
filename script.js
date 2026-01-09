@@ -42,7 +42,7 @@ export function signup(username, email, password, phone) {
             username,
             email,
             phone,
-            skills: [],
+            skills: ["javascript"],
             workload: 0,
             role: "user"
         });
