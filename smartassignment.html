@@ -57,8 +57,6 @@ button {
   cursor: pointer;
 }
 
-button:hover { background: #6dc4d5; }
-
 .member-box {
   border: 1px solid #ddd;
   padding: 15px;
@@ -101,8 +99,8 @@ table th { background: #f1f1f1; }
   <div id="teamInputs"></div>
 
   <h3>Task Details</h3>
-  <input id="taskTitle" placeholder="Task Title" required>
-  <input id="taskSkill" placeholder="Required Skill (e.g. javascript)" required>
+  <input id="taskTitle" placeholder="Task Title">
+  <input id="taskSkill" placeholder="Required Skill (e.g. javascript)">
   <button onclick="assignTask()">Assign Task</button>
 
   <h3>Assignment Result</h3>
@@ -111,7 +109,6 @@ table th { background: #f1f1f1; }
 </div>
 
 <script>
-
 function generateTeamInputs() {
   const count = parseInt(document.getElementById("teamCount").value);
   const container = document.getElementById("teamInputs");
@@ -121,36 +118,32 @@ function generateTeamInputs() {
     container.innerHTML += `
       <div class="member-box">
         <h4>Member ${i}</h4>
-        
-        <input placeholder="Username" id="name${i}">
-        <input placeholder="Skills (comma separated)" id="skills${i}">
-      
-        <button onclick="addUser(${i})">Add/Update User in Firebase</button>
+        <input id="name${i}" placeholder="Username">
+        <input id="skills${i}" placeholder="Skills (comma separated)">
+        <button onclick="addUser(${i})">Add User</button>
       </div>
     `;
   }
 }
 
-
 async function addUser(i) {
-  
   const username = document.getElementById(`name${i}`).value.trim();
-  const skills = document.getElementById(`skills${i}`).value.split(",").map(s => s.trim());
- 
+  const skills = document
+    .getElementById(`skills${i}`)
+    .value
+    .split(",")
+    .map(s => s.trim().toLowerCase());
 
-  if ( !username || skills.length === 0) {
-    alert("Please fill  Username, and Skills");
+  if (!username || skills.length === 0) {
+    alert("Please enter username and skills");
     return;
   }
 
-fetch("http://127.0.0.1:5000/assign-task", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    title: "Design login page",
-    requiredSkill: "javascript"
-  })
-})
+  const res = await fetch("http://127.0.0.1:5000/add-user", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, skills })
+  });
 
   const data = await res.json();
   alert(data.message);
@@ -161,7 +154,7 @@ async function assignTask() {
   const requiredSkill = document.getElementById("taskSkill").value.trim().toLowerCase();
 
   if (!title || !requiredSkill) {
-    alert("Both Task Title and Required Skill are required");
+    alert("Task title and required skill are mandatory");
     return;
   }
 
@@ -181,7 +174,7 @@ async function assignTask() {
         <th>Status</th>
       </tr>
       <tr>
-        <td>${title}</td>
+        <td>${data.task}</td>
         <td>${data.assignedUsername || "Unassigned"}</td>
         <td>${data.status}</td>
       </tr>
