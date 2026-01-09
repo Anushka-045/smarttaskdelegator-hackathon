@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hackathon Dashboard</title>
+
+<style>
+:root {
+  --primary:#5ab4ff;
+  --bg:#f0f8ff;
+  --card:#ffffff;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  margin: 0;
+}
+
+header {
+  background: var(--primary);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header a {
+  color: white;
+  text-decoration: none;
+  margin-left: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.2);
+}
+
+.container {
+  max-width: 1000px;
+  margin: 20px auto;
+  display: flex;
+  gap: 20px;
+}
+
+section {
+  background: var(--card);
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.left, .right { flex: 1; }
+
+input, textarea, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.idea, .comment {
+  background: #eaf4ff;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>Hackathon Dashboard</h2>
+  <div>
+    <a href="#">Home</a>
+    <a href="#" id="logoutBtn">Logout</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="left">
+
+    <section>
+      <h3>Submit Idea</h3>
+      <input id="ideaTitle" placeholder="Idea Title">
+      <textarea id="ideaDesc" placeholder="Idea Description"></textarea>
+      <button id="addIdeaBtn">Submit Idea</button>
+    </section>
+
+    <section>
+      <h3>Create Team</h3>
+      <input id="teamName" placeholder="Team Name">
+      <input id="teamInvite" placeholder="Invite emails (comma separated)">
+      <button id="addTeamBtn">Create Team</button>
+    </section>
+
+    <section>
+      <h3>Ideas Feed</h3>
+      <div id="ideasContainer"></div>
+    </section>
+
+  </div>
+
+  <div class="right">
+
+    <section>
+      <h3>Comments</h3>
+      <input id="chatMessage" placeholder="Write a comment">
+      <button id="sendChatBtn">Send</button>
+      <div id="commentsContainer"></div>
+    </section>
+
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+
+/* 🔥 FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyAgyMmefbJjeMBRK8lZ_MgkfgcsTwo2Q7M",
+  authDomain: "loginform-f0336.firebaseapp.com",
+  databaseURL: "https://loginform-f0336-default-rtdb.firebaseio.com",
+  projectId: "loginform-f0336"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+let currentUser = null;
+
+/* 🔐 AUTH */
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    alert("Please login first");
+    return;
+  }
+  currentUser = user;
+
+  // save email once
+  set(ref(db, `kit/users/${user.uid}/email`), user.email);
+
+  loadIdeas();
+  loadComments();
+});
+
+/* 🚪 LOGOUT */
+document.getElementById("logoutBtn").onclick = () => signOut(auth);
+
+/* 💡 SUBMIT IDEA */
+document.getElementById("addIdeaBtn").onclick = () => {
+  const title = ideaTitle.value.trim();
+  const desc = ideaDesc.value.trim();
+  if (!title || !desc) return alert("Fill all fields");
+
+  push(ref(db, `kit/users/${currentUser.uid}/ideas`), {
+    title,
+    description: desc,
+    timestamp: Date.now()
+  });
+
+  ideaTitle.value = "";
+  ideaDesc.value = "";
+};
+
+/* 📥 LOAD IDEAS FROM ALL USERS */
+function loadIdeas() {
+  onValue(ref(db, "kit/users"), snapshot => {
+    ideasContainer.innerHTML = "";
+
+    snapshot.forEach(userSnap => {
+      const user = userSnap.val();
+      const email = user.email || "User";
+
+      if (user.ideas) {
+        Object.values(user.ideas).forEach(idea => {
+          ideasContainer.innerHTML += `
+            <div class="idea">
+              <b>${idea.title}</b><br>
+              ${idea.description}<br>
+              <small>${email}</small>
+            </div>`;
+        });
+      }
+    });
+  });
+}
+
+/* 💬 SEND COMMENT */
+document.getElementById("sendChatBtn").onclick = () => {
+  const msg = chatMessage.value.trim();
+  if (!msg) return;
+
+  push(ref(db, `kit/users/${currentUser.uid}/comments`), {
+    message: msg,
+    timestamp: Date.now()
+  });
+
+  chatMessage.value = "";
+};
+
+/* 📥 LOAD COMMENTS FROM ALL USERS */
+function loadComments() {
+  onValue(ref(db, "kit/users"), snapshot => {
+    commentsContainer.innerHTML = "";
+
+    snapshot.forEach(userSnap => {
+      const user = userSnap.val();
+      const email = user.email || "User";
+
+      if (user.comments) {
+        Object.values(user.comments).forEach(c => {
+          commentsContainer.innerHTML += `
+            <div class="comment">
+              <b>${email}:</b> ${c.message}
+            </div>`;
+        });
+      }
+    });
+
+    commentsContainer.scrollTop = commentsContainer.scrollHeight;
+  });
+}
+
+/* 👥 CREATE TEAM */
+document.getElementById("addTeamBtn").onclick = () => {
+  const name = teamName.value.trim();
+  const members = teamInvite.value.split(",").map(e => e.trim()).filter(Boolean);
+  if (!name) return alert("Team name required");
+
+  set(ref(db, `kit/users/${currentUser.uid}/team`), {
+    teamName: name,
+    members,
+    owner: currentUser.email,
+    timestamp: Date.now()
+  });
+
+  if (members.length) {
+    window.open(
+      `mailto:${members.join(",")}?subject=Team Invite&body=${currentUser.email} invited you to join team "${name}"`
+    );
+  }
+
+  teamName.value = "";
+  teamInvite.value = "";
+};
+</script>
+
+</body>
+</html>
