@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Task Delegator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6fb;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #6dc4d5;
+  padding: 14px 24px;
+  color: white;
+}
+
+nav h2 { margin: 0; }
+
+nav .right a {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+.container {
+  max-width: 700px;
+  margin: 40px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.08);
+}
+
+h3 { color: #333; }
+
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #6dc4d5;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover { background: #6dc4d5; }
+
+.member-box {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+table th { background: #f1f1f1; }
+</style>
+</head>
+
+<body>
+
+<nav>
+  <h2>Smart Task Delegator</h2>
+  <div class="right">
+    <a href="index.html">Home</a>
+    <a href="coverpage.html">Logout</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <h3>Team Setup</h3>
+  <input type="number" id="teamCount" placeholder="Number of team members">
+  <button onclick="generateTeamInputs()">Generate Team Inputs</button>
+
+  <div id="teamInputs"></div>
+
+  <h3>Task Details</h3>
+  <input id="taskTitle" placeholder="Task Title" required>
+  <input id="taskSkill" placeholder="Required Skill (e.g. javascript)" required>
+  <button onclick="assignTask()">Assign Task</button>
+
+  <h3>Assignment Result</h3>
+  <div id="result"></div>
+
+</div>
+
+<script>
+
+function generateTeamInputs() {
+  const count = parseInt(document.getElementById("teamCount").value);
+  const container = document.getElementById("teamInputs");
+  container.innerHTML = "";
+
+  for (let i = 1; i <= count; i++) {
+    container.innerHTML += `
+      <div class="member-box">
+        <h4>Member ${i}</h4>
+        
+        <input placeholder="Username" id="name${i}">
+        <input placeholder="Skills (comma separated)" id="skills${i}">
+      
+        <button onclick="addUser(${i})">Add/Update User in Firebase</button>
+      </div>
+    `;
+  }
+}
+
+
+async function addUser(i) {
+  
+  const username = document.getElementById(`name${i}`).value.trim();
+  const skills = document.getElementById(`skills${i}`).value.split(",").map(s => s.trim());
+ 
+
+  if ( !username || skills.length === 0) {
+    alert("Please fill  Username, and Skills");
+    return;
+  }
+
+fetch("http://127.0.0.1:5000/assign-task", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    title: "Design login page",
+    requiredSkill: "javascript"
+  })
+})
+
+  const data = await res.json();
+  alert(data.message);
+}
+
+async function assignTask() {
+  const title = document.getElementById("taskTitle").value.trim();
+  const requiredSkill = document.getElementById("taskSkill").value.trim().toLowerCase();
+
+  if (!title || !requiredSkill) {
+    alert("Both Task Title and Required Skill are required");
+    return;
+  }
+
+  const res = await fetch("http://127.0.0.1:5000/assign-task", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title, requiredSkill })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("result").innerHTML = `
+    <table>
+      <tr>
+        <th>Task</th>
+        <th>Assigned To</th>
+        <th>Status</th>
+      </tr>
+      <tr>
+        <td>${title}</td>
+        <td>${data.assignedUsername || "Unassigned"}</td>
+        <td>${data.status}</td>
+      </tr>
+    </table>
+  `;
+}
+</script>
+
+</body>
+</html>
