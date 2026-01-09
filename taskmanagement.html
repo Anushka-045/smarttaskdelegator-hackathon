@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Todo App</title>
+<title>Todo App | Real-Time</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet">
 
@@ -24,7 +24,7 @@ body {
 .container {
   width: 100%;
   max-width: 650px;
-  margin: 80px 20px;
+  margin: 100px 20px 50px 20px;
 }
 
 h1 {
@@ -33,7 +33,6 @@ h1 {
   margin-bottom: 25px;
   text-align: center;
 }
-
 
 .new-todo {
   background: white;
@@ -55,9 +54,7 @@ h1 {
   font-size: 14px;
 }
 
-.new-todo input {
-  outline: none;
-}
+.new-todo input { outline: none; }
 
 .new-todo button {
   background: #2563eb;
@@ -66,10 +63,7 @@ h1 {
   cursor: pointer;
 }
 
-.new-todo button:hover {
-  background: #1e40af;
-}
-
+.new-todo button:hover { background: #1e40af; }
 
 .todo-item {
   background: white;
@@ -88,29 +82,47 @@ h1 {
   gap: 12px;
 }
 
-.todo-left input {
-  width: 18px;
-  height: 18px;
-}
+.todo-left input { width: 18px; height: 18px; }
 
 .todo-text.completed {
   text-decoration: line-through;
   color: gray;
 }
-.navbar{
-position:fixed;top:0;width:100%;height:60px;
-background:white;box-shadow:0 4px 12px rgba(0,0,0,.08);
-display:flex;align-items:center;justify-content:space-between;
-padding:0 30px;z-index:100
+
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  z-index: 100;
 }
-.nav-left{font-size:18px;font-weight:700;color:#2563eb}
-.nav-right{display:flex;gap:20px}
-.nav-right a{text-decoration:none;font-weight:600;color:#334155}
-.nav-right button{
-background:#ef4444;color:white;border:none;
-padding:8px 14px;border-radius:6px;cursor:pointer
+
+.nav-left { font-size: 18px; font-weight: 700; color: #2563eb; }
+
+.nav-right { display: flex; gap: 20px; }
+
+.nav-right a {
+  text-decoration: none;
+  font-weight: 600;
+  color: #334155;
 }
-.nav-right button:hover{background:#b91c1c}
+
+.nav-right button {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.nav-right button:hover { background: #b91c1c; }
 
 .priority {
   padding: 4px 10px;
@@ -123,70 +135,64 @@ padding:8px 14px;border-radius:6px;cursor:pointer
 .medium { background: #fef3c7; color: #92400e; }
 .low { background: #dcfce7; color: #166534; }
 
-.todo-date {
-  font-size: 12px;
-  color: #64748b;
-}
+.todo-date { font-size: 12px; color: #64748b; }
 </style>
 </head>
 
 <body>
   <div class="navbar">
-  <div class="nav-left">Smart Task Delegator</div>
-  <div class="nav-right">
-    <a href="index.html">Home</a>
-    <a href="coverpage.html">logout</a>
+    <div class="nav-left">Smart Task Delegator</div>
+    <div class="nav-right">
+      <a href="index.html">Home</a>
+      <a href="coverpage.html">Logout</a>
+    </div>
   </div>
-</div>
 
-<div class="container">
-  <h1>TODO</h1>
+  <div class="container">
+    <h1>TODO</h1>
 
-  <form class="new-todo" onsubmit="addItem(event)">
-    <input id="todo-input" placeholder="Task name..." />
-    <input type="date" id="todo-date" />
-    <select id="todo-priority">
-      <option value="low">Low</option>
-      <option value="medium">Medium</option>
-      <option value="high">High</option>
-    </select>
-    <button>Add</button>
-  </form>
+    <form class="new-todo" onsubmit="addItem(event)">
+      <input id="todo-input" placeholder="Task name..." />
+      <input type="date" id="todo-date" />
+      <select id="todo-priority">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+      <button>Add</button>
+    </form>
 
-  <div id="todo-list"></div>
-</div>
+    <div id="todo-list"></div>
+  </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-  import {
-    getFirestore,
-    collection,
-    doc,
-    addDoc,
-    onSnapshot,
-    updateDoc,
-    getDoc
-  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+  import { 
+    getDatabase, ref, push, set, onValue, update 
+  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAgyMmefbJjeMBRK8lZ_MgkfgcsTwo2Q7M",
     authDomain: "loginform-f0336.firebaseapp.com",
     projectId: "loginform-f0336",
-    storageBucket: "loginform-f0336.firebasestorage.app",
+    storageBucket: "loginform-f0336.appspot.com",
     messagingSenderId: "444250525738",
-    appId: "1:444250525738:web:04580411603a5c37ef7353"
+    appId: "1:444250525738:web:04580411603a5c37ef7353",
+    databaseURL: "https://loginform-f0336-default-rtdb.firebaseio.com"
   };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db = getFirestore(app);
+  const db = getDatabase(app);
 
   let currentUserId = null;
+  let currentUserName = null;
 
   onAuthStateChanged(auth, user => {
     if (user) {
       currentUserId = user.uid;
+      currentUserName = user.displayName || user.email;
       loadTodos();
     } else {
       alert("Please login first");
@@ -194,14 +200,14 @@ padding:8px 14px;border-radius:6px;cursor:pointer
   });
 
   function loadTodos() {
-    const todosRef = collection(db, "users", currentUserId, "todos");
-
-    onSnapshot(todosRef, snapshot => {
+    const tasksRef = ref(db, `todos/${currentUserId}`);
+    onValue(tasksRef, snapshot => {
       const list = document.getElementById("todo-list");
       list.innerHTML = "";
 
-      snapshot.forEach(docSnap => {
-        const data = docSnap.data();
+      snapshot.forEach(childSnap => {
+        const data = childSnap.val();
+        const id = childSnap.key;
 
         const item = document.createElement("div");
         item.className = "todo-item";
@@ -212,7 +218,7 @@ padding:8px 14px;border-radius:6px;cursor:pointer
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.checked = data.status === "completed";
-        checkbox.onchange = () => toggleStatus(docSnap.id);
+        checkbox.onchange = () => toggleStatus(id);
 
         const text = document.createElement("div");
         text.className = "todo-text";
@@ -243,7 +249,7 @@ padding:8px 14px;border-radius:6px;cursor:pointer
     });
   }
 
-  window.addItem = async function (e) {
+  window.addItem = function(e) {
     e.preventDefault();
 
     const text = document.getElementById("todo-input").value.trim();
@@ -252,27 +258,27 @@ padding:8px 14px;border-radius:6px;cursor:pointer
 
     if (!text) return;
 
-    await addDoc(
-      collection(db, "users", currentUserId, "todos"),
-      {
-        text,
-        date,
-        priority,
-        status: "active"
-      }
-    );
+    const tasksRef = ref(db, `todos/${currentUserId}`);
+    const newTaskRef = push(tasksRef);
+
+    set(newTaskRef, {
+      username: currentUserName,
+      text,
+      date,
+      priority,
+      status: "active"
+    });
 
     document.getElementById("todo-input").value = "";
     document.getElementById("todo-date").value = "";
   };
 
-  async function toggleStatus(id) {
-    const ref = doc(db, "users", currentUserId, "todos", id);
-    const snap = await getDoc(ref);
-
-    await updateDoc(ref, {
-      status: snap.data().status === "active" ? "completed" : "active"
-    });
+  function toggleStatus(id) {
+    const taskRef = ref(db, `todos/${currentUserId}/${id}`);
+    onValue(taskRef, snapshot => {
+      const status = snapshot.val().status === "active" ? "completed" : "active";
+      update(taskRef, { status });
+    }, { onlyOnce: true });
   }
 </script>
 
