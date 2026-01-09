@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Profile | Smart Task Delegator</title>
+<style>
+:root {
+    --primary: #5a3fff;
+    --secondary: #b6ff00;
+    --bg: #f8f9fc;
+    --card-bg: #fff;
+    --text-dark: #111;
+    --text-muted: #555;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+}
+
+header {
+    padding: 20px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+header h2 { margin: 0; color: var(--primary); }
+header a { margin-left: 20px; text-decoration: none; color: var(--primary); font-weight: bold; }
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #5a3fff, #b6ff00, #f8f9fc);
+    color: #111;
+}
+
+.hero h1 { font-size: 48px; margin-bottom: 10px; }
+.hero p { font-size: 20px; margin-bottom: 40px; color: #333; max-width: 700px; }
+
+.profile-card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    max-width: 600px;
+    width: 100%;
+    margin: -50px auto 50px auto;
+}
+
+.profile-card label { font-weight: 600; margin-top: 15px; display: block; }
+.profile-card input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    color: var(--text-dark);
+}
+
+.profile-card input:disabled { background: #f5f5f5; }
+.profile-card input:focus { border: 1px solid var(--secondary); box-shadow: 0 0 8px var(--secondary); outline: none; }
+
+button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 30px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    background: var(--secondary);
+    color: #111;
+    transition: 0.3s;
+}
+button:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--secondary); }
+
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+    <h2>🚀 Smart Task Delegator</h2>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="coverpage.html">Logout</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1 id="heroName">Welcome, User!</h1>
+    <p>Your profile is loaded. Click "Edit / Add More Details" to update your info or add more details.</p>
+</section>
+
+<div class="profile-card">
+    <div id="displayFields">
+        <label>Name</label>
+        <input type="text" id="name" disabled>
+        
+        <label>Email</label>
+        <input type="email" id="email" disabled>
+        
+        <label>Phone</label>
+        <input type="text" id="phone" disabled>
+        
+        <label id="skillsLabel" class="hidden">Skills</label>
+        <input type="text" id="skills" class="hidden" disabled>
+        
+        <label id="qualificationLabel" class="hidden">Qualification</label>
+        <input type="text" id="qualification" class="hidden" disabled>
+        
+        <label id="jobLabel" class="hidden">Job / Role</label>
+        <input type="text" id="job" class="hidden" disabled>
+    </div>
+
+    <button id="editBtn">Edit / Add More Details</button>
+    <button id="saveProfile" class="hidden">Save Profile</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, updateProfile, updateEmail } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAgyMmefbJjeMBRK8lZ_MgkfgcsTwo2Q7M",
+    authDomain: "loginform-f0336.firebaseapp.com",
+    databaseURL: "https://loginform-f0336-default-rtdb.firebaseio.com",
+    projectId: "loginform-f0336",
+    storageBucket: "loginform-f0336.firebasestorage.app",
+    messagingSenderId: "444250525738",
+    appId: "1:444250525738:web:04580411603a5c37ef7353"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore(app);
+
+const heroName = document.getElementById("heroName");
+const nameInput = document.getElementById("name");
+const emailInput = document.getElementById("email");
+const phoneInput = document.getElementById("phone");
+const skillsInput = document.getElementById("skills");
+const qualificationInput = document.getElementById("qualification");
+const jobInput = document.getElementById("job");
+
+const skillsLabel = document.getElementById("skillsLabel");
+const qualificationLabel = document.getElementById("qualificationLabel");
+const jobLabel = document.getElementById("jobLabel");
+
+const editBtn = document.getElementById("editBtn");
+const saveBtn = document.getElementById("saveProfile");
+
+let currentUser = null;
+
+function displayExtraFields(data) {
+    // Only show fields if they have data
+    if(data.skills) { skillsInput.value = data.skills; skillsInput.classList.remove("hidden"); skillsLabel.classList.remove("hidden"); } 
+    if(data.qualification) { qualificationInput.value = data.qualification; qualificationInput.classList.remove("hidden"); qualificationLabel.classList.remove("hidden"); }
+    if(data.job) { jobInput.value = data.job; jobInput.classList.remove("hidden"); jobLabel.classList.remove("hidden"); }
+}
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        currentUser = user;
+        nameInput.value = user.displayName || "";
+        emailInput.value = user.email || "";
+        phoneInput.value = user.phoneNumber || "";
+        heroName.textContent = `Welcome, ${user.displayName || "User"}!`;
+
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            displayExtraFields(docSnap.data());
+        }
+    } else {
+        window.location.href = "login.html";
+    }
+});
+
+editBtn.addEventListener("click", () => {
+    nameInput.disabled = false;
+    emailInput.disabled = false;
+    phoneInput.disabled = false;
+    skillsInput.disabled = false;
+    qualificationInput.disabled = false;
+    jobInput.disabled = false;
+
+    skillsInput.classList.remove("hidden"); skillsLabel.classList.remove("hidden");
+    qualificationInput.classList.remove("hidden"); qualificationLabel.classList.remove("hidden");
+    jobInput.classList.remove("hidden"); jobLabel.classList.remove("hidden");
+
+    saveBtn.classList.remove("hidden");
+    editBtn.classList.add("hidden");
+});
+
+saveBtn.addEventListener("click", async () => {
+    if (!currentUser) return alert("Not logged in");
+
+    try {
+        // Update Auth profile
+        await updateProfile(currentUser, { displayName: nameInput.value });
+        if(emailInput.value !== currentUser.email){
+            await updateEmail(currentUser, emailInput.value);
+        }
+
+        const userData = {
+            skills: skillsInput.value,
+            qualification: qualificationInput.value,
+            job: jobInput.value,
+            name: nameInput.value,
+            email: emailInput.value,
+            phone: phoneInput.value
+        };
+
+        await setDoc(doc(db, "users", currentUser.uid), userData, { merge: true });
+
+        alert("Profile updated successfully!");
+
+        // Disable editing
+        nameInput.disabled = true;
+        emailInput.disabled = true;
+        phoneInput.disabled = true;
+        skillsInput.disabled = true;
+        qualificationInput.disabled = true;
+        jobInput.disabled = true;
+
+        saveBtn.classList.add("hidden");
+        editBtn.classList.remove("hidden");
+
+        // Display only fields with values
+        displayExtraFields(userData);
+        heroName.textContent = `Welcome, ${nameInput.value || "User"}!`;
+
+    } catch (err) {
+        alert(err.message);
+    }
+});
+</script>
+
+</body>
+</html>
