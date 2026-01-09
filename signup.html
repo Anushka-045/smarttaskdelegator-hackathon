@@ -1,83 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Signup | Smart Task Delegator</title>
-
-  <style>
-    :root {
-      --bg-main: #f8f9fc;
-      --card-bg: #ffffff;
-      --neon: #b6ff00;
-      --text-dark: #111;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg-main);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .glass {
-      width: 400px;
-      padding: 35px;
-      background: var(--card-bg);
-      border-radius: 20px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-      text-align: center;
-    }
-
-    h2 {
-      color: var(--neon);
-      margin-bottom: 20px;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 12px;
-      border: 1px solid #ddd;
-      font-size: 15px;
-    }
-
-    button {
-      background: var(--neon);
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .google-btn {
-      background: #fff;
-      border: 1px solid #ddd;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-  </style>
+<title>Signup | Smart Task Delegator</title>
+<style>
+:root {
+    --bg-main: #f8f9fc;
+    --card-bg: #ffffff;
+    --neon: #b6ff00;
+}
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+.glass {
+    max-width: 400px;
+    width: 100%;
+    padding: 40px;
+    background: var(--card-bg);
+    border-radius: 24px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    text-align: center;
+}
+input {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 30px;
+    border: none;
+    font-weight: bold;
+    background: var(--neon);
+}
+.google-btn {
+    background: #fff;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+}
+</style>
 </head>
 
 <body>
 
 <div class="glass">
-  <h2>Smart Task Delegator</h2>
 
-  <button class="google-btn" id="googleLogin">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
-    Continue with Google
-  </button>
+<h2 id="title">Smart Task Delegator</h2>
 
-  <input id="username" placeholder="Username">
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-  <input id="phone" placeholder="Phone">
-  <input id="skills" placeholder="Skills (comma separated)">
+<div id="normalSignup">
+<button class="google-btn" id="googleLogin">
+<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
+Continue with Google
+</button>
 
-  <button id="submit">Create Account</button>
+<hr>
+
+<input id="username" placeholder="Username">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<input id="skills" placeholder="Skills (comma separated)">
+<button id="submit">Create Account</button>
+</div>
+
+<div id="googleSignup" style="display:none">
+<input id="g-username" placeholder="Username (optional)">
+<input id="g-skills" placeholder="Skills (comma separated)">
+<input id="g-phone" placeholder="Phone (optional)">
+<button id="googleSave">Continue</button>
+</div>
+
 </div>
 
 <script type="module">
@@ -89,57 +88,84 @@ const firebaseConfig = {
   apiKey: "AIzaSyAgyMmefbJjeMBRK8lZ_MgkfgcsTwo2Q7M",
   authDomain: "loginform-f0336.firebaseapp.com",
   databaseURL: "https://loginform-f0336-default-rtdb.firebaseio.com",
-  projectId: "loginform-f0336",
-  storageBucket: "loginform-f0336.firebasestorage.app",
-  messagingSenderId: "444250525738",
-  appId: "1:444250525738:web:04580411603a5c37ef7353"
+  projectId: "loginform-f0336"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-document.getElementById("googleLogin").onclick = () => {
-  const provider = new GoogleAuthProvider();
-  signInWithPopup(auth, provider).then(res => {
-    const user = res.user;
-    return set(ref(db, "users/" + user.uid), {
-      username: user.displayName || "",
-      email: user.email,
-      phone: "",
-      skills: [],
-      workload: 0,
-      role: "user"
-    });
-  }).then(() => {
-    window.location.href = "index.html";
-  });
-};
+const params = new URLSearchParams(window.location.search);
+const isGoogle = params.get("google");
 
-document.getElementById("submit").onclick = () => {
+if (isGoogle) {
+  document.getElementById("normalSignup").style.display = "none";
+  document.getElementById("googleSignup").style.display = "block";
+  document.getElementById("title").innerText = "Complete Your Profile";
+}
+
+document.getElementById("googleLogin")?.addEventListener("click", async () => {
+  const provider = new GoogleAuthProvider();
+  const result = await signInWithPopup(auth, provider);
+  sessionStorage.setItem("googleUser", JSON.stringify({
+    uid: result.user.uid,
+    name: result.user.displayName,
+    email: result.user.email
+  }));
+  window.location.href = "signup.html?google=1";
+});
+
+document.getElementById("googleSave")?.addEventListener("click", async () => {
+  const data = JSON.parse(sessionStorage.getItem("googleUser"));
+  const skillsInput = document.getElementById("g-skills").value;
+  const skills = {};
+  skillsInput.split(",").forEach(s => {
+    const key = s.trim().toLowerCase();
+    if (key) skills[key] = true;
+  });
+
+  const phone = document.getElementById("g-phone").value;
+  const username = document.getElementById("g-username").value || data.name;
+
+  await set(ref(db, "users/" + data.uid), {
+    username,
+    email: data.email,
+    phone,
+    skills,
+    workload: 0,
+    role: "user"
+  });
+
+  sessionStorage.removeItem("googleUser");
+  window.location.href = "index.html";
+});
+
+document.getElementById("submit")?.addEventListener("click", async () => {
   const username = document.getElementById("username").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
-  const phone = document.getElementById("phone").value;
-  const skills = document.getElementById("skills").value
-    .split(",")
-    .map(s => s.trim().toLowerCase())
-    .filter(Boolean);
+  const skillsInput = document.getElementById("skills").value;
+  const skills = {};
+  skillsInput.split(",").forEach(s => {
+    const key = s.trim().toLowerCase();
+    if (key) skills[key] = true;
+  });
 
-  createUserWithEmailAndPassword(auth, email, password)
-    .then(res => set(ref(db, "users/" + res.user.uid), {
-      username,
-      email,
-      phone,
-      skills,
-      workload: 0,
-      role: "user"
-    }))
-    .then(() => window.location.href = "index.html");
-};
+
+  const res = await createUserWithEmailAndPassword(auth, email, password);
+
+  await set(ref(db, "users/" + res.user.uid), {
+    username,
+    email,
+    skills,
+    workload: 0,
+    role: "user"
+  });
+
+  window.location.href = "index.html";
+});
 </script>
 
 </body>
 </html>
-
 
