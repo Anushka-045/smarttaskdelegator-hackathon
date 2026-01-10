@@ -8,75 +8,148 @@
 <style>
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f6fb;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #c3ecf7, #eaf6fb);
+  min-height: 100vh;
 }
 
 nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #6dc4d5;
-  padding: 14px 24px;
+  background: linear-gradient(90deg, #4facfe, #6dc4d5);
+  padding: 16px 28px;
   color: white;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
-nav h2 { margin: 0; }
+nav h2 {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
 
 nav .right a {
   color: white;
   text-decoration: none;
-  margin-left: 20px;
-  font-weight: bold;
+  margin-left: 22px;
+  font-weight: 600;
+  position: relative;
+}
+
+nav .right a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  left: 0;
+  bottom: -4px;
+  background: white;
+  transition: width 0.3s;
+}
+
+nav .right a:hover::after {
+  width: 100%;
 }
 
 .container {
-  max-width: 700px;
-  margin: 40px auto;
-  background: white;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.08);
+  max-width: 750px;
+  margin: 50px auto;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
 }
 
-h3 { color: #333; }
+h3 {
+  color: #222;
+  margin-bottom: 10px;
+  border-left: 5px solid #6dc4d5;
+  padding-left: 10px;
+}
 
-input, button {
+input {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin-top: 10px;
-  margin-bottom: 15px;
-  border-radius: 6px;
+  margin-bottom: 16px;
+  border-radius: 8px;
   border: 1px solid #ccc;
+  transition: all 0.3s;
+  font-size: 15px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #6dc4d5;
+  box-shadow: 0 0 8px rgba(109, 196, 213, 0.5);
 }
 
 button {
-  background: #6dc4d5;
-  color: white;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
   border: none;
+  background: linear-gradient(90deg, #4facfe, #6dc4d5);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
 }
 
 .member-box {
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 15px;
+  background: #f9fcff;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 18px;
+  border-left: 5px solid #6dc4d5;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+
+.member-box h4 {
+  margin-top: 0;
+  color: #333;
 }
 
 table {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 25px;
+  overflow: hidden;
+  border-radius: 14px;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.1);
 }
 
-table th, table td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
+table th {
+  background: linear-gradient(90deg, #4facfe, #6dc4d5);
+  color: white;
+  padding: 14px;
+  font-weight: 600;
 }
 
-table th { background: #f1f1f1; }
+table td {
+  padding: 14px;
+  background: white;
+  color: #333;
+}
+
+table tr:not(:last-child) td {
+  border-bottom: 1px solid #eee;
+}
+
+table tr:hover td {
+  background: #f1fbff;
+  transition: background 0.3s;
+}
+
 </style>
 </head>
 

@@ -130,7 +130,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebas
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
-/* 🔥 FIREBASE CONFIG */
+
 const firebaseConfig = {
   apiKey: "AIzaSyAgyMmefbJjeMBRK8lZ_MgkfgcsTwo2Q7M",
   authDomain: "loginform-f0336.firebaseapp.com",
@@ -144,7 +144,7 @@ const db = getDatabase(app);
 
 let currentUser = null;
 
-/* 🔐 AUTH */
+
 onAuthStateChanged(auth, user => {
   if (!user) {
     alert("Please login first");
@@ -152,17 +152,16 @@ onAuthStateChanged(auth, user => {
   }
   currentUser = user;
 
-  // save email once
+
   set(ref(db, `kit/users/${user.uid}/email`), user.email);
 
   loadIdeas();
   loadComments();
 });
 
-/* 🚪 LOGOUT */
 document.getElementById("logoutBtn").onclick = () => signOut(auth);
 
-/* 💡 SUBMIT IDEA */
+
 document.getElementById("addIdeaBtn").onclick = () => {
   const title = ideaTitle.value.trim();
   const desc = ideaDesc.value.trim();
@@ -178,7 +177,6 @@ document.getElementById("addIdeaBtn").onclick = () => {
   ideaDesc.value = "";
 };
 
-/* 📥 LOAD IDEAS FROM ALL USERS */
 function loadIdeas() {
   onValue(ref(db, "kit/users"), snapshot => {
     ideasContainer.innerHTML = "";
@@ -201,7 +199,6 @@ function loadIdeas() {
   });
 }
 
-/* 💬 SEND COMMENT */
 document.getElementById("sendChatBtn").onclick = () => {
   const msg = chatMessage.value.trim();
   if (!msg) return;
@@ -214,7 +211,6 @@ document.getElementById("sendChatBtn").onclick = () => {
   chatMessage.value = "";
 };
 
-/* 📥 LOAD COMMENTS FROM ALL USERS */
 function loadComments() {
   onValue(ref(db, "kit/users"), snapshot => {
     commentsContainer.innerHTML = "";
@@ -237,7 +233,7 @@ function loadComments() {
   });
 }
 
-/* 👥 CREATE TEAM */
+
 document.getElementById("addTeamBtn").onclick = () => {
   const name = teamName.value.trim();
   const members = teamInvite.value.split(",").map(e => e.trim()).filter(Boolean);

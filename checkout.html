@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Checkout | Smart Task Delegator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f8f9fc;
+}
+
+header {
+  background: white;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.container {
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 40px;
+}
+
+.card {
+  background: white;
+  padding: 35px;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+h3 {
+  margin-top: 0;
+  color: #5a3fff;
+}
+
+label {
+  display: block;
+  margin-top: 18px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.pay-btn {
+  margin-top: 30px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 30px;
+  background: #5a3fff;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  margin: 14px 0;
+}
+
+.total {
+  font-size: 22px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>🚀 Smart Task Delegator</h2>
+  <a href="index.html">← Back</a>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h3>Billing Details</h3>
+
+    <label>Name</label>
+    <input id="name">
+
+    <label>Email</label>
+    <input id="email">
+
+    <button class="pay-btn" onclick="subscribe()">Pay Now</button>
+  </div>
+
+  <div class="card">
+    <h3>Order Summary</h3>
+
+    <div class="summary">
+      <span>Plan</span>
+      <strong id="planName"></strong>
+    </div>
+
+    <div class="summary">
+      <span>Duration</span>
+      <strong>5 Months</strong>
+    </div>
+
+    <div class="summary">
+      <span>Price</span>
+      <strong id="planPrice"></strong>
+    </div>
+
+    <hr>
+
+    <div class="total">
+      <span>Total</span>
+      <span id="totalPrice"></span>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAgyMmefbJjeMBRK8lZ_MgkfgcsTwo2Q7M",
+  authDomain: "loginform-f0336.firebaseapp.com",
+  databaseURL: "https://loginform-f0336-default-rtdb.firebaseio.com",
+  projectId: "loginform-f0336"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+const plans = {
+  basic: { name: "Basic Plan", price: 99 },
+  pro: { name: "Pro Plan", price: 200 }
+};
+
+const params = new URLSearchParams(window.location.search);
+const selectedPlan = params.get("plan");
+const plan = plans[selectedPlan];
+
+if (!plan) {
+  alert("Invalid plan selected");
+  window.location.href = "index.html";
+}
+
+document.getElementById("planName").innerText = plan.name;
+document.getElementById("planPrice").innerText = `₹${plan.price}`;
+document.getElementById("totalPrice").innerText = `₹${plan.price}`;
+
+let currentUser = null;
+
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    alert("Please login first");
+    window.location.href = "coverpage.html";
+    return;
+  }
+
+  currentUser = user;
+  document.getElementById("email").value = user.email;
+  document.getElementById("name").value = user.displayName || "";
+});
+
+window.subscribe = function () {
+  if (!currentUser) return;
+
+  const subRef = ref(db, `subscriptions/${currentUser.uid}`);
+
+  set(subRef, {
+    user: {
+      uid: currentUser.uid,
+      name: document.getElementById("name").value,
+      email: document.getElementById("email").value
+    },
+    plan: plan.name,
+    price: plan.price,
+    duration: "5 months",
+    status: "active",
+    subscribedAt: new Date().toISOString()
+  });
+
+  alert("Subscription successful!");
+};
+</script>
+
+</body>
+</html>
