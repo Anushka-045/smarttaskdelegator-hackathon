@@ -124,9 +124,11 @@ function normalizeSkill(s){
 }
 
 function timeToMin(t){
+ if(!t) return NaN
  const [h,m]=t.split(":").map(Number)
  return h*60+m
 }
+
 
 function overlaps(a,b,c,d){
  return a<d && b>c
@@ -154,20 +156,40 @@ function generateMembers(){
 }
 
 function addUser(i){
- const u={
-  name:val(`n${i}`),
-  skills:normalizeSkill(val(`s${i}`)),
-  date:val(`d${i}`),
-  from:timeToMin(val(`f${i}`)),
-  to:timeToMin(val(`t${i}`)),
-  max:Number(val(`m${i}`)),
-  tasks:[]
- }
- if(Object.values(u).includes("")||isNaN(u.from)||isNaN(u.to)){
-  showToast("Fill all user fields",true);return
- }
- team.push(u)
- showToast(`User ${u.name} added`)
+
+  const name  = val(`n${i}`)
+  const skill = val(`s${i}`)
+  const date  = val(`d${i}`)
+  const fromT = val(`f${i}`)
+  const toT   = val(`t${i}`)
+  const max   = Number(val(`m${i}`))
+
+  if(!name || !skill || !date || !fromT || !toT || !max){
+    showToast("Fill all user fields", true)
+    return
+  }
+
+  let from = timeToMin(fromT)
+  let to   = timeToMin(toT)
+
+
+  if(to <= from){
+    to += 1440
+  }
+
+  const user = {
+    name: name,
+    skills: normalizeSkill(skill),
+    date: date,
+    from: from,
+    to: to,
+    max: max,
+    tasks: []
+  }
+
+  team.push(user)
+
+  showToast(`User ${name} added successfully`)
 }
 
 function addTaskRow(){
@@ -186,42 +208,53 @@ function addTaskRow(){
 }
 
 function assign(btn){
- const r=btn.closest("tr")
- if(btn.disabled) return
 
- const skill=normalizeSkill(r.querySelector(".ts").value)[0]
- const date=r.querySelector(".td").value
- const from=timeToMin(r.querySelector(".tf").value)
- const to=timeToMin(r.querySelector(".ttm").value)
+  const r = btn.closest("tr")
 
- let eligible=team.filter(u=>{
-  if(!u.skills.includes(skill)) return false
-  if(u.date!==date) return false
-  if(from<u.from||to>u.to) return false
-  if(u.tasks.length>=u.max) return false
-  for(let t of u.tasks){
-   if(overlaps(from,to,t.from,t.to)) return false
+  const skill = normalizeSkill(r.querySelector(".ts").value)[0]
+  const date  = r.querySelector(".td").value
+
+
+  let from = timeToMin(r.querySelector(".tf").value)
+  let to   = timeToMin(r.querySelector(".ttm").value)
+
+ 
+  if(to <= from){
+    to += 1440
   }
-  return true
- })
 
- if(!eligible.length){
-  showToast("No member free or max workload reached",true)
-  return
- }
+  let eligible = team.filter(u => {
 
- eligible.sort((a,b)=>a.tasks.length-b.tasks.length)
- const chosen=eligible[0]
- chosen.tasks.push({from,to})
+    if(!u.skills.includes(skill)) return false
+    if(u.date !== date) return false
 
- r.querySelector(".as").innerText=chosen.name
- r.querySelector(".st").innerText="Pending"
- btn.disabled=true
- btn.innerText="Assigned"
+    // must fully fit in user availability
+    if(from < u.from || to > u.to) return false
 
- showToast(`Task assigned to ${chosen.name}`)
+    if(u.tasks.length >= u.max) return false
+
+    for(let t of u.tasks){
+      if(overlaps(from, to, t.from, t.to)) return false
+    }
+
+    return true
+  })
+
+  if(!eligible.length){
+    showToast("No matching member available", true)
+    return
+  }
+
+  eligible.sort((a,b) => a.tasks.length - b.tasks.length)
+
+  const chosen = eligible[0]
+  chosen.tasks.push({ from, to })
+
+  r.querySelector(".as").innerText = chosen.name
+  r.querySelector(".st").innerText = "Pending"
+
+  showToast(`Task assigned to ${chosen.name}`)
 }
-
 function removeTask(btn){
  const r=btn.closest("tr")
  if(r.querySelector(".as").innerText!=="—"){
