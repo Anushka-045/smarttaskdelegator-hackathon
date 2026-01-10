@@ -90,7 +90,7 @@ button:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--secondary); }
 <body>
 
 <header>
-    <h2>🚀 Smart Task Delegator</h2>
+    <h2> Smart Task Delegator</h2>
     <nav>
         <a href="index.html">Home</a>
         <a href="coverpage.html">Logout</a>
@@ -208,7 +208,7 @@ saveBtn.addEventListener("click", async () => {
     if (!currentUser) return alert("Not logged in");
 
     try {
-        // Update Auth profile
+      
         await updateProfile(currentUser, { displayName: nameInput.value });
         if(emailInput.value !== currentUser.email){
             await updateEmail(currentUser, emailInput.value);
