@@ -3,258 +3,236 @@
 <head>
 <meta charset="UTF-8">
 <title>Smart Task Delegator</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: linear-gradient(135deg, #c3ecf7, #eaf6fb);
-  min-height: 100vh;
+body{
+  margin:0;
+  font-family:'Segoe UI',Arial,sans-serif;
+  background:linear-gradient(135deg,#dbeafe,#eff6ff);
+  color:#1e293b;
 }
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(90deg, #4facfe, #6dc4d5);
-  padding: 16px 28px;
-  color: white;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+.container{
+  max-width:1100px;
+  margin:40px auto;
+  background:#ffffffdd;
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 25px 45px rgba(0,0,0,.12)
 }
-
-nav h2 {
-  margin: 0;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+h2{color:#1e40af;margin-top:0}
+input,button{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border-radius:10px;
+  border:1px solid #cbd5e1;
+  font-size:15px
 }
-
-nav .right a {
-  color: white;
-  text-decoration: none;
-  margin-left: 22px;
-  font-weight: 600;
-  position: relative;
+button{
+  background:linear-gradient(90deg,#3b82f6,#60a5fa);
+  color:#fff;
+  border:none;
+  font-weight:600;
+  cursor:pointer
 }
-
-nav .right a::after {
-  content: "";
-  position: absolute;
-  width: 0%;
-  height: 2px;
-  left: 0;
-  bottom: -4px;
-  background: white;
-  transition: width 0.3s;
+button:hover{opacity:.9}
+.member{
+  background:#f8fbff;
+  border-left:5px solid #60a5fa;
+  padding:18px;
+  border-radius:14px;
+  margin-top:15px
 }
-
-nav .right a:hover::after {
-  width: 100%;
+table{
+  width:100%;
+  margin-top:25px;
+  border-collapse:collapse;
+  border-radius:14px;
+  overflow:hidden
 }
-
-.container {
-  max-width: 750px;
-  margin: 50px auto;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+th{
+  background:#3b82f6;
+  color:white;
+  padding:14px
 }
-
-h3 {
-  color: #222;
-  margin-bottom: 10px;
-  border-left: 5px solid #6dc4d5;
-  padding-left: 10px;
+td{
+  padding:14px;
+  text-align:center;
+  background:#fff
 }
-
-input {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  margin-bottom: 16px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  transition: all 0.3s;
-  font-size: 15px;
+tr:hover td{background:#f1f7ff}
+.plus{
+  font-size:28px;
+  color:#3b82f6;
+  cursor:pointer
 }
-
-input:focus {
-  outline: none;
-  border-color: #6dc4d5;
-  box-shadow: 0 0 8px rgba(109, 196, 213, 0.5);
+.toast{
+  position:fixed;
+  top:30px;
+  right:30px;
+  background:#22c55e;
+  color:white;
+  padding:16px 22px;
+  border-radius:12px;
+  display:none
 }
-
-button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  background: linear-gradient(90deg, #4facfe, #6dc4d5);
-  color: white;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
-}
-
-.member-box {
-  background: #f9fcff;
-  border-radius: 14px;
-  padding: 18px;
-  margin-bottom: 18px;
-  border-left: 5px solid #6dc4d5;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-}
-
-.member-box h4 {
-  margin-top: 0;
-  color: #333;
-}
-
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin-top: 25px;
-  overflow: hidden;
-  border-radius: 14px;
-  box-shadow: 0 12px 25px rgba(0,0,0,0.1);
-}
-
-table th {
-  background: linear-gradient(90deg, #4facfe, #6dc4d5);
-  color: white;
-  padding: 14px;
-  font-weight: 600;
-}
-
-table td {
-  padding: 14px;
-  background: white;
-  color: #333;
-}
-
-table tr:not(:last-child) td {
-  border-bottom: 1px solid #eee;
-}
-
-table tr:hover td {
-  background: #f1fbff;
-  transition: background 0.3s;
-}
-
+.toast.error{background:#ef4444}
 </style>
 </head>
 
 <body>
-
-<nav>
-  <h2>Smart Task Delegator</h2>
-  <div class="right">
-    <a href="index.html">Home</a>
-    <a href="coverpage.html">Logout</a>
-  </div>
-</nav>
-
 <div class="container">
 
-  <h3>Team Setup</h3>
-  <input type="number" id="teamCount" placeholder="Number of team members">
-  <button onclick="generateTeamInputs()">Generate Team Inputs</button>
+<h2>Team Setup</h2>
+<input type="number" id="count" placeholder="Number of team members">
+<button onclick="generateMembers()">Generate Team Inputs</button>
+<div id="members"></div>
 
-  <div id="teamInputs"></div>
+<hr>
 
-  <h3>Task Details</h3>
-  <input id="taskTitle" placeholder="Task Title">
-  <input id="taskSkill" placeholder="Required Skill (e.g. javascript)">
-  <button onclick="assignTask()">Assign Task</button>
+<h2>Add Task <span class="plus" onclick="addTaskRow()">+</span></h2>
 
-  <h3>Assignment Result</h3>
-  <div id="result"></div>
+<table id="taskTable">
+<tr>
+<th>Task</th>
+<th>Skill</th>
+<th>Date</th>
+<th>Time</th>
+<th>Assigned To</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</table>
 
 </div>
 
+<div id="toast" class="toast"></div>
+
 <script>
-function generateTeamInputs() {
-  const count = parseInt(document.getElementById("teamCount").value);
-  const container = document.getElementById("teamInputs");
-  container.innerHTML = "";
+const team=[]
 
-  for (let i = 1; i <= count; i++) {
-    container.innerHTML += `
-      <div class="member-box">
-        <h4>Member ${i}</h4>
-        <input id="name${i}" placeholder="Username">
-        <input id="skills${i}" placeholder="Skills (comma separated)">
-        <button onclick="addUser(${i})">Add User</button>
-      </div>
-    `;
-  }
+function showToast(msg,isError=false){
+ const t=document.getElementById("toast")
+ t.innerText=msg
+ t.className="toast"+(isError?" error":"")
+ t.style.display="block"
+ setTimeout(()=>t.style.display="none",3000)
 }
 
-async function addUser(i) {
-  const username = document.getElementById(`name${i}`).value.trim();
-  const skills = document
-    .getElementById(`skills${i}`)
-    .value
-    .split(",")
-    .map(s => s.trim().toLowerCase());
-
-  if (!username || skills.length === 0) {
-    alert("Please enter username and skills");
-    return;
-  }
-
-  const res = await fetch("http://127.0.0.1:5000/add-user", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, skills })
-  });
-
-  const data = await res.json();
-  alert(data.message);
+function normalizeSkill(s){
+ return s.toLowerCase().replace(/\s+/g,"").split(",")
 }
 
-async function assignTask() {
-  const title = document.getElementById("taskTitle").value.trim();
-  const requiredSkill = document.getElementById("taskSkill").value.trim().toLowerCase();
-
-  if (!title || !requiredSkill) {
-    alert("Task title and required skill are mandatory");
-    return;
-  }
-
-  const res = await fetch("http://127.0.0.1:5000/assign-task", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, requiredSkill })
-  });
-
-  const data = await res.json();
-
-  document.getElementById("result").innerHTML = `
-    <table>
-      <tr>
-        <th>Task</th>
-        <th>Assigned To</th>
-        <th>Status</th>
-      </tr>
-      <tr>
-        <td>${data.task}</td>
-        <td>${data.assignedUsername || "Unassigned"}</td>
-        <td>${data.status}</td>
-      </tr>
-    </table>
-  `;
+function timeToMin(t){
+ const [h,m]=t.split(":").map(Number)
+ return h*60+m
 }
+
+function overlaps(a,b,c,d){
+ return a<d && b>c
+}
+
+function generateMembers(){
+ members.innerHTML=""
+ team.length=0
+ for(let i=1;i<=count.value;i++){
+  members.innerHTML+=`
+  <div class="member">
+   <h4>Member ${i}</h4>
+   <input id="n${i}" placeholder="Username">
+   <input id="s${i}" placeholder="Skills">
+   <label>Available Date</label>
+   <input type="date" id="d${i}">
+   <label>Start Time</label>
+   <input type="time" id="f${i}">
+   <label>End Time</label>
+   <input type="time" id="t${i}">
+   <input type="number" id="m${i}" placeholder="Max tasks per day">
+   <button onclick="addUser(${i})">Add User</button>
+  </div>`
+ }
+}
+
+function addUser(i){
+ const u={
+  name:val(`n${i}`),
+  skills:normalizeSkill(val(`s${i}`)),
+  date:val(`d${i}`),
+  from:timeToMin(val(`f${i}`)),
+  to:timeToMin(val(`t${i}`)),
+  max:Number(val(`m${i}`)),
+  tasks:[]
+ }
+ if(Object.values(u).includes("")||isNaN(u.from)||isNaN(u.to)){
+  showToast("Fill all user fields",true);return
+ }
+ team.push(u)
+ showToast(`User ${u.name} added`)
+}
+
+function addTaskRow(){
+ const r=taskTable.insertRow()
+ r.innerHTML=`
+  <td><input class="tt"></td>
+  <td><input class="ts"></td>
+  <td><input type="date" class="td"></td>
+  <td><input type="time" class="tf"> - <input type="time" class="ttm"></td>
+  <td class="as">—</td>
+  <td class="st">Created</td>
+  <td>
+   <button onclick="assign(this)">Assign</button>
+   <button onclick="removeTask(this)" style="margin-top:6px;background:#ef4444">Delete</button>
+  </td>`
+}
+
+function assign(btn){
+ const r=btn.closest("tr")
+ if(btn.disabled) return
+
+ const skill=normalizeSkill(r.querySelector(".ts").value)[0]
+ const date=r.querySelector(".td").value
+ const from=timeToMin(r.querySelector(".tf").value)
+ const to=timeToMin(r.querySelector(".ttm").value)
+
+ let eligible=team.filter(u=>{
+  if(!u.skills.includes(skill)) return false
+  if(u.date!==date) return false
+  if(from<u.from||to>u.to) return false
+  if(u.tasks.length>=u.max) return false
+  for(let t of u.tasks){
+   if(overlaps(from,to,t.from,t.to)) return false
+  }
+  return true
+ })
+
+ if(!eligible.length){
+  showToast("No member free or max workload reached",true)
+  return
+ }
+
+ eligible.sort((a,b)=>a.tasks.length-b.tasks.length)
+ const chosen=eligible[0]
+ chosen.tasks.push({from,to})
+
+ r.querySelector(".as").innerText=chosen.name
+ r.querySelector(".st").innerText="Pending"
+ btn.disabled=true
+ btn.innerText="Assigned"
+
+ showToast(`Task assigned to ${chosen.name}`)
+}
+
+function removeTask(btn){
+ const r=btn.closest("tr")
+ if(r.querySelector(".as").innerText!=="—"){
+  showToast("Cannot delete assigned task",true)
+  return
+ }
+ r.remove()
+ showToast("Task deleted")
+}
+
+function val(id){return document.getElementById(id).value}
 </script>
-
 </body>
 </html>
