@@ -5,19 +5,140 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quick Notes Board | Smart Task Delegator</title>
 <style>
-body { font-family: Arial,sans-serif; background:#e0f7ff; color:#034f84; margin:0; padding:0; }
-header { display:flex; justify-content:space-between; align-items:center; background:#7ec8e3; color:white; padding:15px 20px; font-size:24px;}
-header a, header button { color:white; text-decoration:none; margin-left:10px; padding:6px 12px; border-radius:6px; border:none; cursor:pointer; background-color:rgba(255,255,255,0.2);}
-header a:hover, header button:hover { background-color:rgba(255,255,255,0.4);}
-.container { padding:20px; max-width:900px; margin:auto;}
-input, textarea, button { padding:10px; margin:5px 0; font-size:16px; width:100%; box-sizing:border-box; border-radius:6px; border:1px solid #ccc;}
-button { background-color:#034f84; color:white; border:none; cursor:pointer;}
-button:hover { background-color:#022f4b;}
-#notesBoard { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px;}
-.note { background:#fff6b3; padding:15px; border-radius:8px; width:200px; min-height:100px; position:relative; box-shadow:0 3px 6px rgba(0,0,0,0.1);}
-.note p { margin:0; word-wrap: break-word;}
-.deleteBtn { position:absolute; top:5px; right:8px; background:#ff4b4b; color:white; border:none; border-radius:4px; padding:2px 6px; cursor:pointer;}
+:root{
+  --primary:#4f9cff;
+  --primary-soft:#eaf2ff;
+  --bg:#f6f9ff;
+  --card:#ffffff;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --danger:#ef4444;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  margin:0;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:var(--card);
+  padding:16px 28px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
+}
+
+header div:first-child{
+  font-weight:700;
+  color:var(--primary);
+}
+
+header a, header button{
+  background:var(--primary-soft);
+  color:var(--primary);
+  border:none;
+  padding:8px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;
+}
+
+header a:hover, header button:hover{
+  background:#dbeafe;
+}
+
+
+.container{
+  padding:30px;
+  max-width:1000px;
+  margin:auto;
+}
+
+h3{
+  color:var(--primary);
+  margin-bottom:10px;
+}
+
+
+input, textarea{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:10px;
+  border:1px solid #dbe3f0;
+  font-size:14px;
+  background:#fff;
+}
+
+textarea{
+  resize:vertical;
+  min-height:90px;
+}
+
+
+button{
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  padding:12px;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+#notesBoard{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:16px;
+  margin-top:20px;
+}
+
+
+.note{
+  background:var(--card);
+  padding:16px;
+  border-radius:14px;
+  min-height:110px;
+  position:relative;
+  box-shadow:0 8px 18px rgba(0,0,0,0.06);
+  border-left:5px solid var(--primary);
+}
+
+.note p{
+  margin:0;
+  font-size:14px;
+  color:var(--text);
+}
+
+
+.deleteBtn{
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:var(--danger);
+  color:white;
+  border:none;
+  border-radius:6px;
+  padding:4px 8px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.deleteBtn:hover{
+  opacity:0.85;
+}
 </style>
+
 </head>
 <body>
 
