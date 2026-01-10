@@ -254,16 +254,23 @@ footer {
 </head>
 <body>
 
-<header>
-    <h2>Smart Task Delegator</h2>
-    <nav>
-        <a href="#features">Features</a>
-        <a href="#integrations">Integrations</a>
-        <a href="#testimonials">Testimonials</a>
-        <a href="#pricing">Pricing</a>
-        <a href="profile.html">Profile</a>
-    </nav>
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #f8f8f8;">
+  <!-- Logo + Title -->
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <img src="logo.png" alt="Logo" style="height: 40px;">
+    <h2 style="margin: 0;">Smart Task Delegator</h2>
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#features" style="margin-right: 15px; text-decoration: none; color: #333;">Features</a>
+    <a href="#integrations" style="margin-right: 15px; text-decoration: none; color: #333;">Integrations</a>
+    <a href="#testimonials" style="margin-right: 15px; text-decoration: none; color: #333;">Testimonials</a>
+    <a href="#pricing" style="margin-right: 15px; text-decoration: none; color: #333;">Pricing</a>
+    <a href="profile.html" style="text-decoration: none; color: #333;">Profile</a>
+  </nav>
 </header>
+
 
 <section class="hero">
     <div class="hero-left">
@@ -356,13 +363,13 @@ footer {
         <!-- Starter -->
         <div class="price-card">
             <h3>Starter</h3>
-            <h1>$0</h1>
+            <h1>₹0 / 5 mo</h1>
             <ul>
                 <li>Up to 5 tasks</li>
                 <li>Basic features</li>
                 <li>Community support</li>
             </ul>
-            <button onclick="location.href='index.html'">
+            <button onclick="location.href='checkout.html?plan=starter'">
                 Get Started Free
             </button>
         </div>
@@ -370,7 +377,7 @@ footer {
         <!-- Basic -->
         <div class="price-card">
             <h3>Basic</h3>
-            <h1>$9/mo</h1>
+            <h1>₹99 / 5 mo</h1>
 
             <div class="plan-select">
                 <input type="radio" name="plan" value="basic" checked>
@@ -391,7 +398,7 @@ footer {
         <!-- Pro -->
         <div class="price-card">
             <h3>Pro</h3>
-            <h1>$15/mo</h1>
+            <h1>₹200 / 5 mo</h1>
 
             <div class="plan-select">
                 <input type="radio" name="plan" value="pro">
@@ -411,6 +418,7 @@ footer {
 
     </div>
 </section>
+
 
 
 <footer>

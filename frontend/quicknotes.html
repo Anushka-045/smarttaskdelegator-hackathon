@@ -6,13 +6,13 @@
 <title>Quick Notes Board | Smart Task Delegator</title>
 <style>
 :root{
-  --primary:#4f9cff;
-  --primary-soft:#eaf2ff;
-  --bg:#f6f9ff;
-  --card:#ffffff;
+  --primary:#3b6499;
+  --primary-soft:#eee9e9;
+  --bg:#f1f6ff;
+  --card:#fef0f0;
   --text:#1f2937;
   --muted:#6b7280;
-  --danger:#ef4444;
+  --danger:#9f0e0ed3;
 }
 
 *{ box-sizing:border-box; }
@@ -49,7 +49,7 @@ header a, header button{
 }
 
 header a:hover, header button:hover{
-  background:#dbeafe;
+  background:#fafafa;
 }
 
 
@@ -142,14 +142,17 @@ button:hover{
 </head>
 <body>
 
-<header>
-  <div>Smart Task Delegator</div>
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #f0f0f0;">
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <img src="logo.png" alt="Logo" style="height: 40px;">
+    <span style="font-size: 24px; font-weight: bold;">Quick Notes</span>
+  </div>
   <div>
-    <a href="index.html">Home</a>
-    <a href="coverpage.html">Logout</a>
-
+    <a href="index.html" style="margin-right: 15px; text-decoration: none; color: #333;">Home</a>
+    <a href="coverpage.html" style="text-decoration: none; color: #333;">Logout</a>
   </div>
 </header>
+
 
 <div class="container">
   <h3>Add a Quick Note</h3>

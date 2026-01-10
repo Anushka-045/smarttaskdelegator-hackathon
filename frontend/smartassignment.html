@@ -5,6 +5,48 @@
 <title>Smart Task Delegator</title>
 
 <style>
+/* --- Navbar --- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg,#c7daf9,#a6c4eb);
+  color: rgb(11, 58, 99);
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar .logo {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.navbar .logo-img {
+  height: 40px;       
+  width: 40px;
+
+  vertical-align: middle;
+}
+
+
+.navbar .links {
+  display: flex;
+  gap: 15px;
+}
+
+.navbar .links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.navbar .links a:hover {
+  text-decoration: underline;
+}
+
+/* --- Existing styles --- */
 body{
   margin:0;
   font-family:'Segoe UI',Arial,sans-serif;
@@ -19,7 +61,7 @@ body{
   border-radius:18px;
   box-shadow:0 25px 45px rgba(0,0,0,.12)
 }
-h2{color:#1e40af;margin-top:0}
+h2{color:#275991;margin-top:0}
 input,button{
   width:100%;
   padding:12px;
@@ -29,8 +71,8 @@ input,button{
   font-size:15px
 }
 button{
-  background:linear-gradient(90deg,#3b82f6,#60a5fa);
-  color:#fff;
+  background:linear-gradient(90deg,#98baf0,#9dc9ff);
+  color:#254774;
   border:none;
   font-weight:600;
   cursor:pointer
@@ -38,7 +80,7 @@ button{
 button:hover{opacity:.9}
 .member{
   background:#f8fbff;
-  border-left:5px solid #60a5fa;
+  border-left:5px solid #02142a;
   padding:18px;
   border-radius:14px;
   margin-top:15px
@@ -51,8 +93,8 @@ table{
   overflow:hidden
 }
 th{
-  background:#3b82f6;
-  color:white;
+  background:#88b6ff;
+  color:#254774;
   padding:14px
 }
 td{
@@ -63,24 +105,36 @@ td{
 tr:hover td{background:#f1f7ff}
 .plus{
   font-size:28px;
-  color:#3b82f6;
+  color:#0d3d8b;
   cursor:pointer
 }
 .toast{
   position:fixed;
   top:30px;
   right:30px;
-  background:#22c55e;
+  background:#4cff8e;
   color:white;
   padding:16px 22px;
   border-radius:12px;
   display:none
 }
-.toast.error{background:#ef4444}
+.toast.error{background:#d45151}
 </style>
 </head>
 
 <body>
+
+<div class="navbar">
+  <div class="logo">
+    <img src="logo.png" alt="Logo" class="logo-img"> Smart Task Assignment
+  </div>
+  <div class="links">
+    <a href="index.html">Home</a>
+    <a href="coverpage.html">Logout</a>
+  </div>
+</div>
+
+
 <div class="container">
 
 <h2>Team Setup</h2>

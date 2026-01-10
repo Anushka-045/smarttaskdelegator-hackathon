@@ -5,7 +5,7 @@
 <title>Profile | Smart Task Delegator</title>
 <style>
 :root {
-    --primary: #5a3fff;
+    --primary: #000000;
     --secondary: #b6ff00;
     --bg: #f8f9fc;
     --card-bg: #fff;
@@ -38,7 +38,7 @@ header a { margin-left: 20px; text-decoration: none; color: var(--primary); font
     align-items: center;
     text-align: center;
     padding: 80px 20px;
-    background: linear-gradient(135deg, #5a3fff, #b6ff00, #f8f9fc);
+    background: linear-gradient(135deg, #8477da, #acd7f0, #ffffff);
     color: #111;
 }
 
@@ -89,13 +89,20 @@ button:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--secondary); }
 </head>
 <body>
 
-<header>
-    <h2> Smart Task Delegator</h2>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="coverpage.html">Logout</a>
-    </nav>
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #f8f8f8;">
+  <!-- Logo and title -->
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <img src="logo.png" alt="Logo" style="height: 40px;">
+    <h2 style="margin: 0;">Profile</h2>
+  </div>
+
+  <!-- Navigation links -->
+  <nav>
+    <a href="index.html" style="margin-right: 15px; text-decoration: none; color: #333;">Home</a>
+    <a href="coverpage.html" style="text-decoration: none; color: #333;">Logout</a>
+  </nav>
 </header>
+
 
 <section class="hero">
     <h1 id="heroName">Welcome, User!</h1>
