@@ -3,320 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <title>Smart Task Delegator</title>
+
 <style>
-:root {
-    --primary: #5a3fff;
-    --secondary: #b6ff00;
-    --bg: #f8f9fc;
-    --card-bg: #fff;
-    --text-dark: #111;
-    --text-muted: #555;
+body{font-family:Arial;background:#f4f6fb;padding:30px}
+.container{max-width:1100px;margin:auto;background:#fff;padding:25px;border-radius:12px}
+h2{margin-top:0}
+input,select,button{padding:10px;margin:6px 0;width:100%}
+button{background:#55c6d1;color:white;border:none;border-radius:6px;cursor:pointer}
+button:hover{opacity:.9}
+.member{border:1px solid #ddd;padding:15px;margin-top:10px;border-radius:8px}
+.plus{font-size:28px;color:#7c3aed;cursor:pointer;margin-left:10px}
+table{width:100%;border-collapse:collapse;margin-top:20px}
+th,td{border:1px solid #ddd;padding:10px;text-align:center}
+.toast{
+ position:fixed;right:30px;top:30px;
+ background:#16a34a;color:white;
+ padding:18px 22px;font-size:16px;
+ border-radius:10px;display:none;z-index:999
 }
-
-* { box-sizing: border-box; }
-
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text-dark);
-}
-
-a { text-decoration: none; color: var(--primary); }
-
-header {
-    padding: 20px 50px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--card-bg);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-header h2 {
-    margin: 0;
-    font-weight: bold;
-}
-
-nav a {
-    margin-left: 30px;
-    font-weight: 500;
-}
-
-.hero {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 100px 50px;
-    max-width: 1200px;
-    margin: auto;
-}
-
-.hero-left {
-    max-width: 600px;
-}
-
-.hero-left h1 {
-    font-size: 60px;
-    margin-bottom: 20px;
-}
-
-.hero-left p {
-    font-size: 20px;
-    margin-bottom: 30px;
-    color: var(--text-muted);
-}
-
-.hero-left a {
-    background: var(--primary);
-    color: #fff;
-    padding: 16px 36px;
-    border-radius: 30px;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.hero-left a:hover { transform: scale(1.05); }
-
-.hero-right img { max-width: 450px; }
-
-.features .card div {
-    margin-bottom: 15px;
-    color: var(--primary);
-}
-
-
-.features {
-    padding: 80px 50px;
-    background: #fff;
-    text-align: center;
-}
-
-.features h2 {
-    font-size: 38px;
-    margin-bottom: 50px;
-    color: var(--primary);
-}
-
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    max-width: 1200px;
-    margin: auto;
-}
-
-.card {
-    background: var(--card-bg);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    transition: 0.3s;
-}
-.cards a.card {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-}
-.cards a.card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-}
-
-.card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-}
-
-.card h3 { margin-bottom: 15px; color: var(--primary); }
-.card p { color: var(--text-muted); }
-
-
-.integrations {
-    padding: 80px 50px;
-    text-align: center;
-}
-
-.integrations h2 {
-    color: var(--primary);
-    font-size: 36px;
-    margin-bottom: 40px;
-}
-
-.integrations img {
-    margin: 10px;
-    height: 50px;
-}
-.testimonials {
-    padding: 80px 50px;
-    text-align: center;
-    background: #f2f2f2;
-}
-
-.testimonials h2 {
-    color: var(--primary);
-    margin-bottom: 50px;
-}
-
-.testimonial-card {
-    background: #fff;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    margin: 20px;
-}
-
-.testimonial-card p { color: var(--text-muted); }
-
-.pricing {
-    padding: 80px 50px;
-    text-align: center;
-}
-
-.pricing h2 { color: var(--primary); margin-bottom: 50px; }
-
-.pricing-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 30px;
-    max-width: 1000px;
-    margin: auto;
-}
-
-.price-card {
-    background: var(--card-bg);
-    padding: 40px 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    transition: 0.3s;
-}
-
-.price-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-}
-
-.price-card h3 { margin-bottom: 15px; color: var(--primary); }
-.price-card h1 { font-size: 48px; margin-bottom: 20px; }
-.price-card ul { list-style: none; padding: 0; margin-bottom: 20px; }
-.price-card li { margin: 8px 0; color: var(--text-muted); }
-.price-card button {
-    padding: 12px 30px;
-    border-radius: 30px;
-    border: none;
-    background: var(--primary);
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.price-card button:hover { transform: scale(1.05); }
-
-footer {
-    padding: 40px 50px;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 14px;
-    background: #fff;
-    margin-top: 50px;
-}
+.toast.error{background:#dc2626}
 </style>
 </head>
+
 <body>
+<div class="container">
 
-<header>
-    <h2>🚀 Smart Task Delegator</h2>
-    <nav>
-        <a href="#features">Features</a>
-        <a href="#integrations">Integrations</a>
-        <a href="#testimonials">Testimonials</a>
-        <a href="#pricing">Pricing</a>
-        <a href="profile.html">Profile</a>
-    </nav>
-</header>
+<h2>Team Setup</h2>
+<input type="number" id="count" placeholder="Number of team members">
+<button onclick="generateMembers()">Generate Team Inputs</button>
+<div id="members"></div>
 
-<section class="hero">
-    <div class="hero-left">
-        <h1>Plan, Assign, and Track Tasks Effortlessly</h1>
-        <p>Smart Task Delegator helps teams manage tasks, prioritize work, track progress, and organize schedules—all in one platform.</p>
-        <a href="#signup">Get Started Free</a>
-    </div>
-    <div class="hero-right">
-        <img src="/mnt/data/bcb33b12-f533-41d2-95f6-9dd39a704448.png" alt="Dashboard Preview">
-    </div>
-</section>
+<hr>
 
-<section class="features" id="features">
-    <h2>Features We Offer</h2>
-    <p style="color: var(--text-muted); max-width: 700px; margin: auto 0 50px auto;">
-        Everything your team needs to stay productive, organized, and connected—without juggling multiple tools.
-    </p>
-    <div class="cards">
-        <a href="taskmanagement.html" class="card">
-            <div style="font-size: 50px;">📝</div>
-            <h3>Task Management</h3>
-            <p>Create, organize, and monitor tasks effortlessly in a single dashboard.</p>
-        </a>
-        <a href="smartassignment.html" class="card">
-            <div style="font-size: 50px;">🤖</div>
-            <h3>Smart Task Assignment</h3>
-            <p>Automatically assign tasks based on skills, availability, and workload.</p>
-        </a>
-        <a href="hackathonstarterkit.html" class="card">
-            <div style="font-size: 50px;">👥</div>
-            <h3>Hackathon starter kit</h3>
-            <p>Create ideas, form teams, add members, and collaborate in real time during hackathons.</p>
-        </a>
-        <a href="timetable.html" class="card">
-            <div style="font-size: 50px;">📅</div>
-            <h3>Quick Notes</h3>
-            <p>Capture quick thoughts, reminders, and study notes in one place for easy access anytime.</p>
+<h2>Add Task <span class="plus" onclick="addTaskRow()">+</span></h2>
 
-        </a>
-        <a href="analytics.html" class="card">
-            <div style="font-size: 50px;">📊</div>
-            <h3>Analytics & Reports</h3>
-            <p>Get insights into team performance and task completion trends.</p>
-        </a>
-        <a href="notifications.html" class="card">
-            <div style="font-size: 50px;">🔔</div>
-            <h3>Notifications & Reminders</h3>
-            <p>Stay updated with real-time alerts and reminders for important tasks.</p>
-        </a>
-    </div>
-</section>
+<table id="taskTable">
+<tr>
+<th>Task</th>
+<th>Skill</th>
+<th>Date</th>
+<th>Time</th>
+<th>Priority</th>
+<th>Assigned To</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</table>
 
-<section class="integrations" id="integrations">
-    <h2>Connect Integrations You Use Every Day</h2>
-    <div>
-        <img src="gm.png" alt="Gmail">
-        <img src="d.png" alt="Drive">
-        <img src="gc.png" alt="Google Calendar">
-        <img src="fg.png" alt="Figma">
-    </div>
-</section>
+</div>
 
-<section class="testimonials" id="testimonials">
-    <h2>People Just Like You Are Already Using Smart Task Delegator</h2>
-    <div class="cards">
-        <div class="testimonial-card">
-            <p>"This tool completely changed the way our team organizes tasks!"</p>
-            <strong>- Marketing Lead</strong>
-        </div>
-        <div class="testimonial-card">
-            <p>"We finally can track everything in one place efficiently."</p>
-            <strong>- Project Coordinator</strong>
-        </div>
-        <div class="testimonial-card">
-            <p>"Highly recommended for remote team collaboration."</p>
-            <strong>- Developer</strong>
-        </div>
-    </div>
-</section>
+<div id="toast" class="toast"></div>
 
+<<<<<<< HEAD
 <section class="pricing" id="pricing">
     <h2>Simple Pricing Plans</h2>
     <div class="pricing-grid">
@@ -356,10 +94,114 @@ footer {
         </div>
     </div>
 </section>
+=======
+<script>
+const team=[]
+function showToast(msg,isError=false){
+ const t=document.getElementById("toast")
+ t.innerText=msg
+ t.className="toast"+(isError?" error":"")
+ t.style.display="block"
+ setTimeout(()=>t.style.display="none",3000)
+}
+>>>>>>> ed00c5bb21379c1e5754bf904b69812e776b70ea
 
-<footer>
-    © 2026 Smart Task Delegator | Built with ❤️ for Teams and Hackathons
-</footer>
+function normalizeSkill(s){
+ return s.toLowerCase().replace(/\s+/g,"").split(",")
+}
+function timeToMin(t){
+ const [h,m]=t.split(":").map(Number)
+ return h*60+m
+}
+function overlaps(a,b,c,d){
+ return a<d && b>c
+}
 
+function generateMembers(){
+ members.innerHTML=""
+ team.length=0
+ for(let i=1;i<=count.value;i++){
+  members.innerHTML+=`
+   <div class="member">
+    <h4>Member ${i}</h4>
+    <input id="n${i}" placeholder="Username">
+    <input id="s${i}" placeholder="Skills">
+    <input type="date" id="d${i}">
+    <input type="time" id="f${i}">
+    <input type="time" id="t${i}">
+    <input type="number" id="m${i}" placeholder="Max workload">
+    <button onclick="addUser(${i})">Add User</button>
+   </div>`
+ }
+}
+
+function addUser(i){
+ const u={
+  name:val(`n${i}`),
+  skills:normalizeSkill(val(`s${i}`)),
+  date:val(`d${i}`),
+  from:timeToMin(val(`f${i}`)),
+  to:timeToMin(val(`t${i}`)),
+  max:Number(val(`m${i}`)),
+  tasks:[]
+ }
+ if(Object.values(u).includes("")||isNaN(u.from)||isNaN(u.to)){
+  showToast("Fill all user fields",true);return
+ }
+ team.push(u)
+ showToast(`User ${u.name} added`)
+}
+
+function addTaskRow(){
+ const r=taskTable.insertRow()
+ r.innerHTML=`
+  <td><input class="tt"></td>
+  <td><input class="ts"></td>
+  <td><input type="date" class="td"></td>
+  <td><input type="time" class="tf"> - <input type="time" class="ttm"></td>
+  <td><select class="tp"><option>High</option><option>Medium</option><option>Low</option></select></td>
+  <td class="as">—</td>
+  <td class="st">Created</td>
+  <td><button onclick="assign(this)">Assign</button></td>`
+}
+
+function assign(btn){
+ const r=btn.closest("tr")
+ const skill=normalizeSkill(r.querySelector(".ts").value)[0]
+ const date=r.querySelector(".td").value
+ const from=timeToMin(r.querySelector(".tf").value)
+ const to=timeToMin(r.querySelector(".ttm").value)
+
+ let eligible=team.filter(u=>{
+  if(!u.skills.includes(skill)) return false
+  if(u.date!==date) return false
+
+  // 🔥 FIX: must fit entirely in availability
+  if(from<u.from || to>u.to) return false
+
+  if(u.tasks.length>=u.max) return false
+
+  for(let t of u.tasks){
+   if(overlaps(from,to,t.from,t.to)) return false
+  }
+  return true
+ })
+
+ if(!eligible.length){
+  showToast("No member free or max workload reached",true)
+  return
+ }
+
+ eligible.sort((a,b)=>a.tasks.length-b.tasks.length)
+ const chosen=eligible[0]
+ chosen.tasks.push({from,to})
+
+ r.querySelector(".as").innerText=chosen.name
+ r.querySelector(".st").innerText="Pending"
+ showToast(`Task assigned to ${chosen.name}`)
+}
+
+function val(id){return document.getElementById(id).value}
+</script>
 </body>
 </html>

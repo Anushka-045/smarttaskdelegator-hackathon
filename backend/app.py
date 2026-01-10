@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify
 import firebase_admin
 from firebase_admin import credentials, db
 from flask_cors import CORS
-from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -13,32 +12,62 @@ firebase_admin.initialize_app(cred, {
 })
 
 
+def time_to_minutes(t):
+    h, m = t.split(":")
+    return int(h) * 60 + int(m)
+
+
 @app.route("/add-user", methods=["POST"])
 def add_user():
     data = request.json
-    username = data.get("username")
-    skills = data.get("skills", [])
 
-    user_ref = db.reference("users").push({
+    team_id = data.get("teamId")
+    username = data.get("username")
+    skills_raw = data.get("skills")
+    date = data.get("date")
+    free_from = data.get("from")
+    free_to = data.get("to")
+    max_load = int(data.get("maxLoad", 0))
+
+    if not all([team_id, username, skills_raw, date, free_from, free_to, max_load]):
+        return jsonify({"message": "Invalid user data"}), 400
+
+    skills = [s.strip().lower() for s in skills_raw.split(",") if s.strip()]
+
+    db.reference(f"teams/{team_id}/users").push({
         "username": username,
         "skills": skills,
+        "date": date,
+        "free_from": free_from,
+        "free_to": free_to,
         "workload": 0,
-        "active": True,
-        "role": "team-member"
+        "max_load": max_load,
+        "active": True
     })
 
-    return jsonify({"message": f"{username} added to active team"})
+    return jsonify({"message": "User added"})
 
 
 @app.route("/assign-task", methods=["POST"])
 def assign_task():
     data = request.json
+
+    team_id = data.get("teamId")
     title = data.get("title")
     required_skill = data.get("requiredSkill", "").lower()
+    task_date = data.get("date")
+    task_from = data.get("from")
+    task_to = data.get("to")
 
-    users = db.reference("users").get()
+    if not all([team_id, title, required_skill, task_date, task_from, task_to]):
+        return jsonify({"assignedUsername": None, "status": "Failed"}), 400
 
-    best_user = None
+    task_from_min = time_to_minutes(task_from)
+    task_to_min = time_to_minutes(task_to)
+
+    users = db.reference(f"teams/{team_id}/users").get()
+
+    best_user_id = None
     best_username = None
     min_workload = float("inf")
 
@@ -47,68 +76,49 @@ def assign_task():
             if not user.get("active"):
                 continue
 
-            skills = user.get("skills", [])
+            if required_skill not in user.get("skills", []):
+                continue
+
+            if user.get("date") != task_date:
+                continue
+
+            user_from = time_to_minutes(user.get("free_from"))
+            user_to = time_to_minutes(user.get("free_to"))
+
+            if not (user_from <= task_from_min and user_to >= task_to_min):
+                continue
+
             workload = user.get("workload", 0)
+            max_load = user.get("max_load", 0)
 
-            if required_skill in skills and workload < min_workload:
-                best_user = uid
-                best_username = user.get("username")
+            if workload >= max_load:
+                continue
+
+            if workload < min_workload:
                 min_workload = workload
+                best_user_id = uid
+                best_username = user.get("username")
 
-    task_ref = db.reference("tasks").push({
+    db.reference(f"teams/{team_id}/tasks").push({
         "title": title,
         "requiredSkill": required_skill,
-        "assignedTo": best_user,
+        "date": task_date,
+        "from": task_from,
+        "to": task_to,
+        "assignedTo": best_user_id,
         "assignedUsername": best_username,
         "status": "Pending"
     })
 
-    if best_user:
-        db.reference(f"users/{best_user}/workload").set(min_workload + 1)
+    if best_user_id:
+        db.reference(
+            f"teams/{team_id}/users/{best_user_id}/workload"
+        ).set(min_workload + 1)
 
     return jsonify({
-        "task": title,
         "assignedUsername": best_username,
         "status": "Pending"
     })
-
-
-@app.route("/my-tasks/<uid>")
-def my_tasks(uid):
-    tasks = db.reference("tasks").get()
-    user_tasks = []
-
-    if tasks:
-        for tid, task in tasks.items():
-            if task.get("assignedTo") == uid:
-                task["id"] = tid
-                user_tasks.append(task)
-
-    return jsonify(user_tasks)
-
-
-@app.route("/update-task", methods=["POST"])
-def update_task():
-    data = request.json
-    task_id = data.get("taskId")
-    new_status = data.get("status")
-
-    task_ref = db.reference(f"tasks/{task_id}")
-    task = task_ref.get()
-
-    if not task:
-        return jsonify({"message": "Task not found"}), 404
-
-    task_ref.update({"status": new_status})
-
-    if new_status == "Completed":
-        uid = task.get("assignedTo")
-        if uid:
-            user_ref = db.reference(f"users/{uid}")
-            workload = user_ref.child("workload").get() or 0
-            user_ref.child("workload").set(max(workload - 1, 0))
-
-    return jsonify({"message": "Task updated"})
 
 
 if __name__ == "__main__":
