@@ -28,17 +28,28 @@ header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  background:var(--card);
+  background-color: #e4f6fcb9;
   padding:16px 28px;
   box-shadow:0 4px 12px rgba(0,0,0,0.06);
 }
 
-header div:first-child{
-  font-weight:700;
-  color:var(--primary);
+header div.logo-title{
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-header a, header button{
+header div.logo-title img{
+  height: 40px;
+}
+
+header div.logo-title span{
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+header a{
   background:var(--primary-soft);
   color:var(--primary);
   border:none;
@@ -46,12 +57,13 @@ header a, header button{
   border-radius:8px;
   cursor:pointer;
   font-size:14px;
+  text-decoration: none;
+  margin-left:10px;
 }
 
-header a:hover, header button:hover{
+header a:hover{
   background:#fafafa;
 }
-
 
 .container{
   padding:30px;
@@ -63,7 +75,6 @@ h3{
   color:var(--primary);
   margin-bottom:10px;
 }
-
 
 input, textarea{
   width:100%;
@@ -79,7 +90,6 @@ textarea{
   resize:vertical;
   min-height:90px;
 }
-
 
 button{
   background:var(--primary);
@@ -103,7 +113,6 @@ button:hover{
   margin-top:20px;
 }
 
-
 .note{
   background:var(--card);
   padding:16px;
@@ -114,12 +123,16 @@ button:hover{
   border-left:5px solid var(--primary);
 }
 
-.note p{
-  margin:0;
+.note-email{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+.note-text{
   font-size:14px;
   color:var(--text);
 }
-
 
 .deleteBtn{
   position:absolute;
@@ -138,21 +151,19 @@ button:hover{
   opacity:0.85;
 }
 </style>
-
 </head>
 <body>
 
-<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #f0f0f0;">
-  <div style="display: flex; align-items: center; gap: 10px;">
-    <img src="logo.png" alt="Logo" style="height: 40px;">
-    <span style="font-size: 24px; font-weight: bold;">Quick Notes</span>
+<header>
+  <div class="logo-title">
+    <img src="logo.png" alt="Logo">
+    <span>Quick Notes</span>
   </div>
   <div>
-    <a href="index.html" style="margin-right: 15px; text-decoration: none; color: #333;">Home</a>
-    <a href="coverpage.html" style="text-decoration: none; color: #333;">Logout</a>
+    <a href="dashboard.html">Home</a>
+    <a href="index.html">Logout</a>
   </div>
 </header>
-
 
 <div class="container">
   <h3>Add a Quick Note</h3>
@@ -165,7 +176,7 @@ button:hover{
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -188,7 +199,6 @@ const noteText = document.getElementById('noteText');
 const addNoteBtn = document.getElementById('addNoteBtn');
 const notesBoard = document.getElementById('notesBoard');
 
-
 onAuthStateChanged(auth, (user) => {
   if(user){
     currentUser = user;
@@ -200,7 +210,6 @@ onAuthStateChanged(auth, (user) => {
     window.location.href = 'coverpage.html';
   }
 });
-
 
 addNoteBtn.addEventListener('click', () => {
   if(!currentUser) return alert("Please log in to add notes.");
@@ -217,7 +226,6 @@ addNoteBtn.addEventListener('click', () => {
   noteText.value = '';
 });
 
-
 function loadNotes(){
   const notesRef = ref(db, `notes/${currentUser.uid}`);
   onValue(notesRef, (snapshot) => {
@@ -226,7 +234,10 @@ function loadNotes(){
       const note = noteSnap.val();
       const noteDiv = document.createElement('div');
       noteDiv.className = 'note';
-      noteDiv.innerHTML = `<p><strong>${note.userEmail}:</strong> ${note.text}</p>`;
+      noteDiv.innerHTML = `
+        <div class="note-email">${note.userEmail}</div>
+        <div class="note-text">${note.text}</div>
+      `;
 
       const delBtn = document.createElement('button');
       delBtn.className = 'deleteBtn';

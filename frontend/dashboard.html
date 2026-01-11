@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Task Delegator</title>
+<style>
+:root {
+    --primary: #5a3fff;
+    --secondary: #b6ff00;
+    --bg: #f8f9fc;
+    --card-bg: #fff;
+    --text-dark: #111;
+    --text-muted: #555;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+}
+
+a { text-decoration: none; color: var(--primary); }
+
+header {
+    padding: 25px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h2 {
+    margin: 0;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+nav a {
+    margin-left: 35px;
+    font-weight: 500;
+}
+
+/* Hero Section */
+.hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 140px 60px;
+    max-width: 1200px;
+    margin: auto;
+    gap: 60px;
+}
+
+.hero-left {
+    max-width: 600px;
+}
+
+.hero-left h1 {
+    font-size: 64px;
+    margin-bottom: 35px;
+}
+
+.hero-left p {
+    font-size: 22px;
+    margin-bottom: 45px;
+    color: var(--text-muted);
+}
+
+.hero-left a {
+    background: var(--primary);
+    color: #fff;
+    padding: 18px 42px;
+    border-radius: 30px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.hero-left a:hover { transform: scale(1.05); }
+
+.hero-right img {
+    max-width: 500px;
+    border-radius: 20px;
+}
+
+/* Features Section */
+.features {
+    padding: 120px 60px;
+    background: #fff;
+    text-align: center;
+}
+
+.features h2 {
+    font-size: 38px;
+    margin-bottom: 60px;
+    color: var(--primary);
+}
+
+.features p {
+    color: var(--text-muted);
+    max-width: 700px;
+    margin: 0 auto 60px auto;
+    text-align: center;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.card {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.cards a.card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.cards a.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+.card h3 { margin-bottom: 15px; color: var(--primary); }
+.card p { color: var(--text-muted); }
+
+/* Integrations */
+.integrations {
+    padding: 120px 60px;
+    text-align: center;
+}
+
+.integrations h2 {
+    color: var(--primary);
+    font-size: 36px;
+    margin-bottom: 50px;
+}
+
+.integrations img {
+    margin: 20px 50px;
+    width: 130px;
+    height: auto;
+    transition: transform 0.3s;
+}
+
+.integrations img:hover {
+    transform: scale(1.1);
+}
+
+/* Testimonials */
+.testimonials {
+    padding: 120px 60px;
+    text-align: center;
+    background: #f2f2f2;
+}
+
+.testimonials h2 {
+    color: var(--primary);
+    margin-bottom: 60px;
+}
+
+.testimonial-card {
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    margin: 20px;
+}
+
+.testimonial-card p { color: var(--text-muted); }
+
+/* Pricing */
+.pricing {
+    padding: 120px 60px;
+    text-align: center;
+}
+
+.pricing h2 { color: var(--primary); margin-bottom: 60px; }
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 40px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.price-card {
+    background: var(--card-bg);
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.price-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+.price-card h3 { margin-bottom: 15px; color: var(--primary); }
+.price-card h1 { font-size: 48px; margin-bottom: 25px; }
+.price-card ul { list-style: none; padding: 0; margin-bottom: 25px; }
+.price-card li { margin: 10px 0; color: var(--text-muted); }
+.price-card button {
+    padding: 14px 36px;
+    border-radius: 30px;
+    border: none;
+    background: var(--primary);
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.price-card button:hover { transform: scale(1.05); }
+.plan-select {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+    align-items: center;
+    font-weight: 500;
+}
+
+.plan-select input {
+    accent-color: var(--primary);
+    transform: scale(1.2);
+}
+
+footer {
+    padding: 60px 50px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    background: #fff;
+    margin-top: 50px;
+}
+</style>
+</head>
+<body>
+
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #f8f8f8;">
+  <!-- Logo + Title -->
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <img src="logo.png" alt="Logo" style="height: 40px;">
+    <h2 style="margin: 0;">Smart Task Delegator</h2>
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#features" style="margin-right: 15px; text-decoration: none; color: #333;">Features</a>
+    <a href="#integrations" style="margin-right: 15px; text-decoration: none; color: #333;">Integrations</a>
+    <a href="#testimonials" style="margin-right: 15px; text-decoration: none; color: #333;">Testimonials</a>
+    <a href="#pricing" style="margin-right: 15px; text-decoration: none; color: #333;">Pricing</a>
+    <a href="profile.html" style="text-decoration: none; color: #333;">Profile</a>
+  </nav>
+</header>
+
+
+<section class="hero">
+    <div class="hero-left">
+        <h1>Plan, Assign, and Track Tasks Effortlessly</h1>
+        <p>Smart Task Delegator helps teams manage tasks, prioritize work, track progress, and organize schedules—all in one platform.</p>
+        <a href="#signup">Get Started Free</a>
+    </div>
+    <div class="hero-right">
+        <img src="pic.png" alt="Dashboard Preview">
+    </div>
+</section>
+
+<section class="features" id="features">
+    <h2>Features We Offer</h2>
+    <p>
+        Everything your team needs to stay productive, organized, and connected—without juggling multiple tools.
+    </p>
+    <div class="cards">
+        <a href="taskmanagement.html" class="card">
+            <div style="font-size: 50px;">📝</div>
+            <h3>Task Management</h3>
+            <p>Create, organize, and monitor tasks effortlessly in a single dashboard.</p>
+        </a>
+        <a href="smartassignment.html" class="card">
+            <div style="font-size: 50px;">🤖</div>
+            <h3>Smart Task Assignment</h3>
+            <p>Automatically assign tasks based on skills, availability, and workload.</p>
+        <a href="hackathonstarterkit.html" class="card">
+    <div style="font-size: 50px;">🚀</div>
+    <h3>Hackathon Starter Kit</h3>
+    <p>
+        Create ideas, form teams, manage members, and collaborate in real time during hackathons.
+    </p>
+</a>
+
+<a href="quicknotes.html" class="card">
+    <div style="font-size: 50px;">🗒️</div>
+    <h3>Quick Notes</h3>
+    <p>
+        Capture quick thoughts, reminders, and ideas instantly—accessible anytime, anywhere.
+    </p>
+</a>
+
+        <a href="analytics.html" class="card">
+            <div style="font-size: 50px;">📊</div>
+            <h3>Analytics & Reports</h3>
+            <p>Get insights into team performance and task completion trends.</p>
+        </a>
+        <a href="notifications.html" class="card">
+            <div style="font-size: 50px;">🔔</div>
+            <h3>Notifications & Reminders</h3>
+            <p>Stay updated with real-time alerts and reminders for important tasks.</p>
+        </a>
+    </div>
+</section>
+
+<section class="integrations" id="integrations">
+    <h2>Connect Integrations You Use Every Day</h2>
+    <div>
+        <img src="gm.png" alt="Gmail">
+        <img src="d.png" alt="Drive">
+        <img src="gc.png" alt="Google Calendar">
+        <img src="fg.png" alt="Figma">
+    </div>
+</section>
+
+<section class="testimonials" id="testimonials">
+    <h2>People Just Like You Are Already Using Smart Task Delegator</h2>
+    <div class="cards">
+        <div class="testimonial-card">
+            <p>"This tool completely changed the way our team organizes tasks!"</p>
+            <strong>- Marketing Lead</strong>
+        </div>
+        <div class="testimonial-card">
+            <p>"We finally can track everything in one place efficiently."</p>
+            <strong>- Project Coordinator</strong>
+        </div>
+        <div class="testimonial-card">
+            <p>"Highly recommended for remote team collaboration."</p>
+            <strong>- Developer</strong>
+        </div>
+    </div>
+</section>
+
+<section class="pricing" id="pricing">
+    <h2>Simple Pricing Plans</h2>
+
+    <div class="pricing-grid">
+
+        <!-- Starter -->
+        <div class="price-card">
+            <h3>Starter</h3>
+            <h1>₹0 / 5 mo</h1>
+            <ul>
+                <li>Up to 5 tasks</li>
+                <li>Basic features</li>
+                <li>Community support</li>
+            </ul>
+            <button onclick="location.href='checkout.html?plan=starter'">
+                Get Started Free
+            </button>
+        </div>
+
+        <!-- Basic -->
+        <div class="price-card">
+            <h3>Basic</h3>
+            <h1>₹99 / 5 mo</h1>
+
+            <div class="plan-select">
+                <input type="radio" name="plan" value="basic" checked>
+                <span>Select Basic Plan</span>
+            </div>
+
+            <ul>
+                <li>Unlimited tasks</li>
+                <li>Smart assignment</li>
+                <li>Email support</li>
+            </ul>
+
+            <button onclick="location.href='checkout.html?plan=basic'">
+                Continue
+            </button>
+        </div>
+
+        <!-- Pro -->
+        <div class="price-card">
+            <h3>Pro</h3>
+            <h1>₹200 / 5 mo</h1>
+
+            <div class="plan-select">
+                <input type="radio" name="plan" value="pro">
+                <span>Select Pro Plan</span>
+            </div>
+
+            <ul>
+                <li>All features unlocked</li>
+                <li>Analytics & reports</li>
+                <li>Priority 24/7 support</li>
+            </ul>
+
+            <button onclick="location.href='checkout.html?plan=pro'">
+                Continue
+            </button>
+        </div>
+
+    </div>
+</section>
+
+
+
+<footer>
+    © 2026 Smart Task Delegator | Built with ❤️ for Teams and Hackathons
+</footer>
+
+</body>
+</html>

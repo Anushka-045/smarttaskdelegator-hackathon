@@ -30,38 +30,69 @@ body {
 .topbar {
   background: var(--card);
   padding: 16px 32px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   box-shadow: 0 4px 12px rgba(0,0,0,0.06);
 }
 
+
 .left-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-weight: 700;
   color: var(--primary);
   text-decoration: none;
 }
 
-.center-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #075875;
-  text-align: center;
-  text-decoration: solid underline;
+.logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  object-fit: cover;
 }
+
 
 .right-actions {
   text-align: right;
 }
 
-.right-actions button {
-  background: #ef4444;
-  color: #fff;
-  border: none;
+.right-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+
+.home-btn {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
   padding: 8px 16px;
   border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
 }
+
+.home-btn:hover {
+  background: var(--primary-soft);
+}
+
+.logout-btn {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  opacity: 0.9;
+}
+
 
 /* ===== LAYOUT ===== */
 .container {
@@ -138,34 +169,46 @@ button.primary:hover {
 <body>
 
 <header class="topbar">
-  <div class="left-title">Smart Task Delegator</div>
+  <div class="left-title">
+    <img src="logo.png" alt="Logo" class="logo">
+    <span>Hackathon Starter Kit</span>
+  </div>
 
-  <div class="center-title">Hackathon Starter Kit</div>
+
 
   <div class="right-actions">
-    <button id="logoutBtn">Logout</button>
-  </div>
+  <button class="home-btn" onclick="location.href='dashboard.html'">Home</button>
+  <a href="index.html"><button id="logoutBtn" class="logout-btn">Logout</button></a>
+</div>
+
 </header>
+
 
 
 <div class="container">
 
   <div class="card">
-    <h3> Submit Idea</h3>
+    <h3>Submit Idea</h3>
     <input id="ideaTitle" placeholder="Idea title">
     <textarea id="ideaDesc" placeholder="Idea description"></textarea>
     <button class="primary" id="addIdeaBtn">Submit Idea</button>
   </div>
 
   <div class="card">
-    <h3> Create Team</h3>
+    <h3>Create Team</h3>
     <input id="teamName" placeholder="Team name">
     <input id="teamInvite" placeholder="Invite emails (comma separated)">
     <button class="primary" id="addTeamBtn">Create Team</button>
   </div>
 
+  <!-- ✅ FULL WIDTH -->
   <div class="card feed">
-    <h3> Ideas Feed</h3>
+    <h3>📨 Sent Invitations</h3>
+    <div id="inviteContainer"></div>
+  </div>
+
+  <div class="card feed">
+    <h3>Ideas Feed</h3>
     <div id="ideasContainer"></div>
   </div>
 
@@ -177,6 +220,7 @@ button.primary:hover {
   </div>
 
 </div>
+
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
@@ -197,14 +241,20 @@ const db = getDatabase(app);
 let currentUser;
 
 onAuthStateChanged(auth, user => {
-  if (!user) return alert("Please login first");
+  if (!user) {
+    alert("Please login first");
+    return;
+  }
+
   currentUser = user;
 
   set(ref(db, `kit/users/${user.uid}/email`), user.email);
 
   loadIdeas();
   loadComments();
+  loadInvites();
 });
+
 
 logoutBtn.onclick = () => signOut(auth);
 
@@ -267,15 +317,65 @@ function loadComments() {
 
 
 addTeamBtn.onclick = () => {
-  if (!teamName.value) return;
+  if (!teamName.value || !teamInvite.value) {
+    alert("Enter team name and invite email(s)");
+    return;
+  }
+
+  const emails = teamInvite.value.split(",").map(e => e.trim());
+
+  // Save team
   set(ref(db, `kit/users/${currentUser.uid}/team`), {
     teamName: teamName.value,
-    members: teamInvite.value.split(",").map(e => e.trim()),
+    members: emails,
     owner: currentUser.email,
     timestamp: Date.now()
   });
+
+  // Save invite logs
+  emails.forEach(email => {
+    push(ref(db, `kit/users/${currentUser.uid}/sentInvites`), {
+      to: email,
+      teamName: teamName.value,
+      timestamp: Date.now()
+    });
+  });
+
+  // Open mail client (Outlook / Gmail)
+  const subject = encodeURIComponent(`Hackathon Team Invitation: ${teamName.value}`);
+  const body = encodeURIComponent(
+`Hello,
+
+You are invited to join my hackathon team.
+
+Team Name: ${teamName.value}
+Invited by: ${currentUser.email}
+
+Please reply if interested.
+
+Regards,
+Hackathon Starter Kit`
+  );
+
+  window.location.href = `mailto:${emails.join(",")}?subject=${subject}&body=${body}`;
+
   teamName.value = teamInvite.value = "";
 };
+function loadInvites() {
+  onValue(ref(db, `kit/users/${currentUser.uid}/sentInvites`), snap => {
+    inviteContainer.innerHTML = "";
+    snap.forEach(inv => {
+      const i = inv.val();
+      inviteContainer.innerHTML += `
+        <div class="item">
+          <b>${i.to}</b> invited to <b>${i.teamName}</b><br>
+          <small>${new Date(i.timestamp).toLocaleString()}</small>
+        </div>
+      `;
+    });
+  });
+}
+
 </script>
 
 </body>

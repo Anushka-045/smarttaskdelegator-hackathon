@@ -3,426 +3,309 @@
 <head>
 <meta charset="UTF-8">
 <title>Smart Task Delegator</title>
+
 <style>
 :root {
-    --primary: #5a3fff;
-    --secondary: #b6ff00;
-    --bg: #f8f9fc;
-    --card-bg: #fff;
-    --text-dark: #111;
+    --bg-main: #f8f9fb;
+    --bg-section: #ffffff;
+    --bg-card: rgba(0,0,0,0.04);
+    --text-main: #111;
     --text-muted: #555;
+    --neon: #b6ff00;
+    --neon-soft: rgba(182,255,0,0.25);
 }
 
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+}
 
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text-dark);
+    background: var(--bg-main);
+    color: var(--text-main);
 }
 
-a { text-decoration: none; color: var(--primary); }
 
-header {
-    padding: 25px 60px;
+.top-nav {
+    padding: 22px 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--card-bg);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
-header h2 {
+.top-nav h2 {
     margin: 0;
-    font-weight: bold;
-    font-size: 24px;
+    color: #000;
 }
 
-nav a {
-    margin-left: 35px;
-    font-weight: 500;
-}
-
-/* Hero Section */
-.hero {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 140px 60px;
-    max-width: 1200px;
-    margin: auto;
-    gap: 60px;
-}
-
-.hero-left {
-    max-width: 600px;
-}
-
-.hero-left h1 {
-    font-size: 64px;
-    margin-bottom: 35px;
-}
-
-.hero-left p {
-    font-size: 22px;
-    margin-bottom: 45px;
-    color: var(--text-muted);
-}
-
-.hero-left a {
-    background: var(--primary);
-    color: #fff;
-    padding: 18px 42px;
-    border-radius: 30px;
-    font-weight: bold;
+.top-nav a {
+    color: #111;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 25px;
     transition: 0.3s;
 }
 
-.hero-left a:hover { transform: scale(1.05); }
-
-.hero-right img {
-    max-width: 500px;
-    border-radius: 20px;
+.top-nav a:hover {
+    color: #6fbf00;
 }
 
-/* Features Section */
-.features {
-    padding: 120px 60px;
-    background: #fff;
+
+.hero {
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    padding: 40px 20px;
+    background:
+        radial-gradient(circle at top, var(--neon-soft), transparent 55%),
+        linear-gradient(180deg, #ffffff, #f1f3f6);
 }
 
-.features h2 {
-    font-size: 38px;
-    margin-bottom: 60px;
-    color: var(--primary);
+.hero-box {
+    max-width: 850px;
+    padding: 65px 45px;
+    background: #ffffff;
+    border-radius: 28px;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.12);
 }
 
-.features p {
+.hero h1 {
+    font-size: 60px;
+    margin-bottom: 18px;
+}
+
+.hero p {
+    font-size: 21px;
+    line-height: 1.6;
     color: var(--text-muted);
-    max-width: 700px;
-    margin: 0 auto 60px auto;
+}
+
+
+.cta-buttons {
+    margin-top: 40px;
+}
+
+.cta-buttons a {
+    display: inline-block;
+    margin: 12px;
+    padding: 15px 38px;
+    font-size: 18px;
+    border-radius: 40px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-primary {
+    background: var(--neon);
+    color: #000;
+}
+
+.btn-secondary {
+    border: 2px solid #000;
+    color: #000;
+}
+
+.cta-buttons a:hover {
+    transform: translateY(-4px) scale(1.05);
+}
+
+
+.section {
+    padding: 90px 40px;
+    background: var(--bg-section);
     text-align: center;
 }
 
-.cards {
+.section:nth-child(even) {
+    background: #f4f6f9;
+}
+
+.section h2 {
+    font-size: 38px;
+    margin-bottom: 45px;
+}
+
+.cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 40px;
-    max-width: 1200px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 30px;
+    max-width: 1100px;
     margin: auto;
 }
 
 .card {
-    background: var(--card-bg);
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    transition: 0.3s;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 22px;
+    transition: 0.35s;
+    border: 1px solid rgba(0,0,0,0.08);
 }
 
-.cards a.card {
-    display: block;
-    text-decoration: none;
-    color: inherit;
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 45px rgba(182,255,0,0.35);
 }
 
-.cards a.card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-}
-
-.card h3 { margin-bottom: 15px; color: var(--primary); }
-.card p { color: var(--text-muted); }
-
-/* Integrations */
-.integrations {
-    padding: 120px 60px;
-    text-align: center;
-}
-
-.integrations h2 {
-    color: var(--primary);
-    font-size: 36px;
-    margin-bottom: 50px;
-}
-
-.integrations img {
-    margin: 20px 50px;
-    width: 130px;
-    height: auto;
-    transition: transform 0.3s;
-}
-
-.integrations img:hover {
-    transform: scale(1.1);
-}
-
-/* Testimonials */
-.testimonials {
-    padding: 120px 60px;
-    text-align: center;
-    background: #f2f2f2;
-}
-
-.testimonials h2 {
-    color: var(--primary);
-    margin-bottom: 60px;
-}
-
-.testimonial-card {
-    background: #fff;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    margin: 20px;
-}
-
-.testimonial-card p { color: var(--text-muted); }
-
-/* Pricing */
 .pricing {
-    padding: 120px 60px;
+    padding: 100px 30px;
+    background:
+        linear-gradient(180deg, #ffffff, #f6f8fb);
     text-align: center;
 }
-
-.pricing h2 { color: var(--primary); margin-bottom: 60px; }
 
 .pricing-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 40px;
+    gap: 32px;
     max-width: 1000px;
     margin: auto;
 }
 
 .price-card {
-    background: var(--card-bg);
-    padding: 50px 40px;
+    background: #ffffff;
+    padding: 38px;
+    border-radius: 24px;
+    transition: 0.3s;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.price-card h1 {
+    font-size: 52px;
+    color: #000;
+}
+
+.popular {
+    border: 2px solid var(--neon);
+    transform: scale(1.05);
+}
+
+.badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--neon);
+    color: #000;
+    padding: 6px 18px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    transition: 0.3s;
-}
-
-.price-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-}
-
-.price-card h3 { margin-bottom: 15px; color: var(--primary); }
-.price-card h1 { font-size: 48px; margin-bottom: 25px; }
-.price-card ul { list-style: none; padding: 0; margin-bottom: 25px; }
-.price-card li { margin: 10px 0; color: var(--text-muted); }
-.price-card button {
-    padding: 14px 36px;
-    border-radius: 30px;
-    border: none;
-    background: var(--primary);
-    color: #fff;
+    font-size: 12px;
     font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.price-card button:hover { transform: scale(1.05); }
-.plan-select {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px 0;
-    align-items: center;
-    font-weight: 500;
-}
-
-.plan-select input {
-    accent-color: var(--primary);
-    transform: scale(1.2);
 }
 
 footer {
-    padding: 60px 50px;
+    padding: 28px;
     text-align: center;
-    color: var(--text-muted);
-    font-size: 14px;
-    background: #fff;
-    margin-top: 50px;
+    background: #ffffff;
+    color: #666;
+    font-size: 18px;
+    border-top: 1px solid rgba(0,0,0,0.08);
 }
 </style>
+
 </head>
+
 <body>
 
-<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #f8f8f8;">
-  <!-- Logo + Title -->
-  <div style="display: flex; align-items: center; gap: 10px;">
-    <img src="logo.png" alt="Logo" style="height: 40px;">
-    <h2 style="margin: 0;">Smart Task Delegator</h2>
-  </div>
+<div class="top-nav" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; ">
+    <!-- Logo + Title -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="logo.png" alt="Logo" style="height: 40px;">
+        <h2 style="margin: 0;">Smart Task Delegator</h2>
+    </div>
 
-  <!-- Navigation -->
-  <nav>
-    <a href="#features" style="margin-right: 15px; text-decoration: none; color: #333;">Features</a>
-    <a href="#integrations" style="margin-right: 15px; text-decoration: none; color: #333;">Integrations</a>
-    <a href="#testimonials" style="margin-right: 15px; text-decoration: none; color: #333;">Testimonials</a>
-    <a href="#pricing" style="margin-right: 15px; text-decoration: none; color: #333;">Pricing</a>
-    <a href="profile.html" style="text-decoration: none; color: #333;">Profile</a>
-  </nav>
-</header>
+    <!-- Links -->
+    <div>
+        <a href="signup.html" style="margin-right: 15px; text-decoration: none; color: #333;">Signup</a>
+        <a href="login.html" style="text-decoration: none; color: #333;">Login</a>
+    </div>
+</div>
 
 
 <section class="hero">
-    <div class="hero-left">
-        <h1>Plan, Assign, and Track Tasks Effortlessly</h1>
-        <p>Smart Task Delegator helps teams manage tasks, prioritize work, track progress, and organize schedules—all in one platform.</p>
-        <a href="#signup">Get Started Free</a>
-    </div>
-    <div class="hero-right">
-        <img src="pic.png" alt="Dashboard Preview">
-    </div>
-</section>
+    <div class="hero-box">
+        <h1>Assign Smarter. Win Faster.</h1>
+        <p>
+            AI-inspired task delegation that matches skills, balances workload,
+            and boosts productivity — built for hackathons, teams, and classrooms.
+        </p>
 
-<section class="features" id="features">
-    <h2>Features We Offer</h2>
-    <p>
-        Everything your team needs to stay productive, organized, and connected—without juggling multiple tools.
-    </p>
-    <div class="cards">
-        <a href="taskmanagement.html" class="card">
-            <div style="font-size: 50px;">📝</div>
-            <h3>Task Management</h3>
-            <p>Create, organize, and monitor tasks effortlessly in a single dashboard.</p>
-        </a>
-        <a href="smartassignment.html" class="card">
-            <div style="font-size: 50px;">🤖</div>
-            <h3>Smart Task Assignment</h3>
-            <p>Automatically assign tasks based on skills, availability, and workload.</p>
-        <a href="hackathonstarterkit.html" class="card">
-    <div style="font-size: 50px;">🚀</div>
-    <h3>Hackathon Starter Kit</h3>
-    <p>
-        Create ideas, form teams, manage members, and collaborate in real time during hackathons.
-    </p>
-</a>
-
-<a href="quicknotes.html" class="card">
-    <div style="font-size: 50px;">🗒️</div>
-    <h3>Quick Notes</h3>
-    <p>
-        Capture quick thoughts, reminders, and ideas instantly—accessible anytime, anywhere.
-    </p>
-</a>
-
-        <a href="analytics.html" class="card">
-            <div style="font-size: 50px;">📊</div>
-            <h3>Analytics & Reports</h3>
-            <p>Get insights into team performance and task completion trends.</p>
-        </a>
-        <a href="notifications.html" class="card">
-            <div style="font-size: 50px;">🔔</div>
-            <h3>Notifications & Reminders</h3>
-            <p>Stay updated with real-time alerts and reminders for important tasks.</p>
-        </a>
-    </div>
-</section>
-
-<section class="integrations" id="integrations">
-    <h2>Connect Integrations You Use Every Day</h2>
-    <div>
-        <img src="gm.png" alt="Gmail">
-        <img src="d.png" alt="Drive">
-        <img src="gc.png" alt="Google Calendar">
-        <img src="fg.png" alt="Figma">
-    </div>
-</section>
-
-<section class="testimonials" id="testimonials">
-    <h2>People Just Like You Are Already Using Smart Task Delegator</h2>
-    <div class="cards">
-        <div class="testimonial-card">
-            <p>"This tool completely changed the way our team organizes tasks!"</p>
-            <strong>- Marketing Lead</strong>
-        </div>
-        <div class="testimonial-card">
-            <p>"We finally can track everything in one place efficiently."</p>
-            <strong>- Project Coordinator</strong>
-        </div>
-        <div class="testimonial-card">
-            <p>"Highly recommended for remote team collaboration."</p>
-            <strong>- Developer</strong>
+        <div class="cta-buttons">
+            <a href="signup.html" class="btn-primary">Start Free</a>
+            <a href="#features" class="btn-secondary">Explore Features</a>
         </div>
     </div>
 </section>
 
-<section class="pricing" id="pricing">
-    <h2>Simple Pricing Plans</h2>
+
+<section class="section" id="features">
+    <h2> Core Features</h2>
+
+    <div class="cards-grid">
+        <div class="card">
+            <h3>🧠 Smart Assignment</h3>
+            <p>Automatically assigns tasks using skills and availability.</p>
+        </div>
+        <div class="card">
+            <h3>⚡ Real-Time Sync</h3>
+            <p>Live updates powered by Firebase.</p>
+        </div>
+        <div class="card">
+            <h3>🔐 Secure Auth</h3>
+            <p>Firebase Authentication with Google sign-in.</p>
+        </div>
+        <div class="card">
+            <h3>📊 Productivity Tracking</h3>
+            <p>Clear visibility of workload distribution.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <h2> Use Cases</h2>
+
+    <div class="cards-grid">
+        <div class="card">🏆 Hackathons</div>
+        <div class="card">🎓 Student Projects</div>
+        <div class="card">🏫 Academic Teams</div>
+        <div class="card">🏢 Office Workflows</div>
+    </div>
+</section>
+
+<section class="pricing">
+    <h2> Pricing</h2>
+    <p style="color: var(--text-muted)">₹0 for 5 months → ₹99 → ₹200</p>
 
     <div class="pricing-grid">
-
-        <!-- Starter -->
         <div class="price-card">
             <h3>Starter</h3>
-            <h1>₹0 / 5 mo</h1>
-            <ul>
-                <li>Up to 5 tasks</li>
-                <li>Basic features</li>
-                <li>Community support</li>
-            </ul>
-            <button onclick="location.href='checkout.html?plan=starter'">
-                Get Started Free
-            </button>
+            <h1>₹0</h1>
+            <p>First 5 Months</p>
         </div>
 
-        <!-- Basic -->
-        <div class="price-card">
+        <div class="price-card popular">
+            <span class="badge">Popular</span>
             <h3>Basic</h3>
-            <h1>₹99 / 5 mo</h1>
-
-            <div class="plan-select">
-                <input type="radio" name="plan" value="basic" checked>
-                <span>Select Basic Plan</span>
-            </div>
-
-            <ul>
-                <li>Unlimited tasks</li>
-                <li>Smart assignment</li>
-                <li>Email support</li>
-            </ul>
-
-            <button onclick="location.href='checkout.html?plan=basic'">
-                Continue
-            </button>
+            <h1>₹99</h1>
+            <p>Per Month</p>
         </div>
 
-        <!-- Pro -->
         <div class="price-card">
             <h3>Pro</h3>
-            <h1>₹200 / 5 mo</h1>
-
-            <div class="plan-select">
-                <input type="radio" name="plan" value="pro">
-                <span>Select Pro Plan</span>
-            </div>
-
-            <ul>
-                <li>All features unlocked</li>
-                <li>Analytics & reports</li>
-                <li>Priority 24/7 support</li>
-            </ul>
-
-            <button onclick="location.href='checkout.html?plan=pro'">
-                Continue
-            </button>
+            <h1>₹200</h1>
+            <p>Per Month</p>
         </div>
-
     </div>
 </section>
 
-
-
 <footer>
-    © 2026 Smart Task Delegator | Built with ❤️ for Teams and Hackathons
+    © 2026 Smart Task Delegator | Built with Firebase & 💚 for Hackathons
 </footer>
 
 </body>
