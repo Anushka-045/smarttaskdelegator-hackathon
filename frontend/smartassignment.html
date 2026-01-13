@@ -17,33 +17,23 @@
   top: 0;
   z-index: 100;
 }
-
 .navbar .logo {
   font-weight: bold;
   font-size: 20px;
 }
-
 .navbar .logo-img {
-  height: 40px;       
+  height: 40px;
   width: 40px;
-
   vertical-align: middle;
 }
-
-
 .navbar .links {
   display: flex;
   gap: 15px;
 }
-
 .navbar .links a {
   color: white;
   text-decoration: none;
   font-weight: 500;
-}
-
-.navbar .links a:hover {
-  text-decoration: underline;
 }
 
 /* --- Existing styles --- */
@@ -126,20 +116,20 @@ tr:hover td{background:#f1f7ff}
 
 <div class="navbar">
   <div class="logo">
-    <img src="logo.png" alt="Logo" class="logo-img"> Smart Task Assignment
+    <img src="logo.png" alt="Logo" class="logo-img">
+    Smart Task Assignment
   </div>
   <div class="links">
-    <a href="dashboard.html">Home</a>
-    <a href="index.html">Logout</a>
+    <a href="#">Home</a>
+    <a href="#">Logout</a>
   </div>
 </div>
-
 
 <div class="container">
 
 <h2>Team Setup</h2>
 <input type="number" id="count" placeholder="Number of team members">
-<button onclick="generateMembers()">Generate Team Inputs</button>
+<button type="button" onclick="generateMembers()">Generate Team Inputs</button>
 <div id="members"></div>
 
 <hr>
@@ -163,7 +153,14 @@ tr:hover td{background:#f1f7ff}
 <div id="toast" class="toast"></div>
 
 <script>
-const team=[]
+/* ---------------- FIXED BASE ---------------- */
+const TEAM_ID = "team1"
+const API_BASE = "http://127.0.0.1:5000"
+
+const team = []
+const members = document.getElementById("members")
+const count = document.getElementById("count")
+const taskTable = document.getElementById("taskTable")
 
 function showToast(msg,isError=false){
  const t=document.getElementById("toast")
@@ -178,73 +175,76 @@ function normalizeSkill(s){
 }
 
 function timeToMin(t){
- if(!t) return NaN
  const [h,m]=t.split(":").map(Number)
  return h*60+m
 }
-
 
 function overlaps(a,b,c,d){
  return a<d && b>c
 }
 
+/* ---------------- USERS ---------------- */
+
 function generateMembers(){
  members.innerHTML=""
  team.length=0
+
  for(let i=1;i<=count.value;i++){
   members.innerHTML+=`
   <div class="member">
    <h4>Member ${i}</h4>
    <input id="n${i}" placeholder="Username">
    <input id="s${i}" placeholder="Skills">
-   <label>Available Date</label>
    <input type="date" id="d${i}">
-   <label>Start Time</label>
    <input type="time" id="f${i}">
-   <label>End Time</label>
    <input type="time" id="t${i}">
-   <input type="number" id="m${i}" placeholder="Max tasks per day">
-   <button onclick="addUser(${i})">Add User</button>
+   <input type="number" id="m${i}" placeholder="Max tasks">
+   <button type="button" onclick="addUser(${i})">Add User</button>
   </div>`
  }
 }
 
-function addUser(i){
+async function addUser(i){
+ const name  = val(`n${i}`)
+ const skill = val(`s${i}`)
+ const date  = val(`d${i}`)
+ const fromT = val(`f${i}`)
+ const toT   = val(`t${i}`)
+ const max   = Number(val(`m${i}`))
 
-  const name  = val(`n${i}`)
-  const skill = val(`s${i}`)
-  const date  = val(`d${i}`)
-  const fromT = val(`f${i}`)
-  const toT   = val(`t${i}`)
-  const max   = Number(val(`m${i}`))
+ if(!name || !skill || !date || !fromT || !toT || !max){
+  showToast("Fill all user fields",true)
+  return
+ }
 
-  if(!name || !skill || !date || !fromT || !toT || !max){
-    showToast("Fill all user fields", true)
-    return
-  }
+ await fetch(API_BASE+"/add-user",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({
+    teamId:TEAM_ID,
+    username:name,
+    skills:skill,
+    date:date,
+    from:fromT,
+    to:toT,
+    maxLoad:max
+  })
+ })
 
-  let from = timeToMin(fromT)
-  let to   = timeToMin(toT)
+ team.push({
+  name,
+  skills:normalizeSkill(skill),
+  date,
+  from:timeToMin(fromT),
+  to:timeToMin(toT),
+  max,
+  tasks:[]
+ })
 
-
-  if(to <= from){
-    to += 1440
-  }
-
-  const user = {
-    name: name,
-    skills: normalizeSkill(skill),
-    date: date,
-    from: from,
-    to: to,
-    max: max,
-    tasks: []
-  }
-
-  team.push(user)
-
-  showToast(`User ${name} added successfully`)
+ showToast(`User ${name} added`)
 }
+
+/* ---------------- TASKS ---------------- */
 
 function addTaskRow(){
  const r=taskTable.insertRow()
@@ -256,59 +256,58 @@ function addTaskRow(){
   <td class="as">—</td>
   <td class="st">Created</td>
   <td>
-   <button onclick="assign(this)">Assign</button>
-   <button onclick="removeTask(this)" style="margin-top:6px;background:#ef4444">Delete</button>
+   <button type="button" onclick="assign(this)">Assign</button>
+   <button type="button" onclick="removeTask(this)" style="margin-top:6px;background:#ef4444">Delete</button>
   </td>`
 }
 
 function assign(btn){
+ const r = btn.closest("tr")
 
-  const r = btn.closest("tr")
+ const skill = normalizeSkill(r.querySelector(".ts").value)[0]
+ const date  = r.querySelector(".td").value
+ let from = timeToMin(r.querySelector(".tf").value)
+ let to   = timeToMin(r.querySelector(".ttm").value)
 
-  const skill = normalizeSkill(r.querySelector(".ts").value)[0]
-  const date  = r.querySelector(".td").value
-
-
-  let from = timeToMin(r.querySelector(".tf").value)
-  let to   = timeToMin(r.querySelector(".ttm").value)
-
- 
-  if(to <= from){
-    to += 1440
+ let eligible = team.filter(u=>{
+  if(!u.skills.includes(skill)) return false
+  if(u.date!==date) return false
+  if(from<u.from || to>u.to) return false
+  if(u.tasks.length>=u.max) return false
+  for(let t of u.tasks){
+   if(overlaps(from,to,t.from,t.to)) return false
   }
+  return true
+ })
 
-  let eligible = team.filter(u => {
+ if(!eligible.length){
+  showToast("No matching member",true)
+  return
+ }
 
-    if(!u.skills.includes(skill)) return false
-    if(u.date !== date) return false
+ eligible.sort((a,b)=>a.tasks.length-b.tasks.length)
+ const chosen = eligible[0]
+ chosen.tasks.push({from,to})
 
-    // must fully fit in user availability
-    if(from < u.from || to > u.to) return false
+ r.querySelector(".as").innerText = chosen.name
+ r.querySelector(".st").innerText = "Pending"
 
-    if(u.tasks.length >= u.max) return false
-
-    for(let t of u.tasks){
-      if(overlaps(from, to, t.from, t.to)) return false
-    }
-
-    return true
+ fetch(API_BASE+"/assign-task",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({
+   teamId:TEAM_ID,
+   title:r.querySelector(".tt").value,
+   requiredSkill:skill,
+   date,
+   from:r.querySelector(".tf").value,
+   to:r.querySelector(".ttm").value
   })
+ })
 
-  if(!eligible.length){
-    showToast("No matching member available", true)
-    return
-  }
-
-  eligible.sort((a,b) => a.tasks.length - b.tasks.length)
-
-  const chosen = eligible[0]
-  chosen.tasks.push({ from, to })
-
-  r.querySelector(".as").innerText = chosen.name
-  r.querySelector(".st").innerText = "Pending"
-
-  showToast(`Task assigned to ${chosen.name}`)
+ showToast(`Task assigned to ${chosen.name}`)
 }
+
 function removeTask(btn){
  const r=btn.closest("tr")
  if(r.querySelector(".as").innerText!=="—"){
@@ -321,5 +320,6 @@ function removeTask(btn){
 
 function val(id){return document.getElementById(id).value}
 </script>
+
 </body>
 </html>
